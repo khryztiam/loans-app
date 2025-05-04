@@ -1,0 +1,94 @@
+.layout-container {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .layout-toolbar {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .layout-user-section {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  .layout-content {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    padding: 1rem;
+    gap: 1rem;
+  }
+  
+  .layout-main {
+    flex: 3;
+    background-color: #fff;
+    padding: 1rem;
+    border-radius: 8px;
+    overflow-y: auto;
+  }
+  
+  .layout-sidebar {
+    flex: 1;
+    background-color: #f4f4f4;
+    padding: 1rem;
+    border-radius: 8px;
+    overflow-y: auto;
+  }
+  
+  /* Responsivo para móviles */
+  @media (max-width: 768px) {
+    .layout-content {
+      flex-direction: column;
+    }
+  
+    .layout-main,
+    .layout-sidebar {
+      width: 100%;
+    }
+  }
+  
+/* Estilo para el contenedor flotante */
+.floating-upload-container {
+    position: fixed;
+    bottom: 20px;  /* Ajusta la distancia desde la parte inferior */
+    right: 20px;   /* Ajusta la distancia desde la parte derecha */
+    background-color: white;
+    border: 2px solid #3f51b5;
+    border-radius: 10px;
+    padding: 20px;
+    width: 250px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1000;  /* Asegura que esté por encima de otros elementos */
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .floating-upload-button {
+    position: fixed;
+    bottom: 80px;  /* Ajusta la distancia desde la parte inferior */
+    right: 20px;   /* Ajusta la distancia desde la parte derecha */
+    background-color: #3f51b5;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 30px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .floating-upload-button:hover {
+    background-color: #303f9f;
+  }
+  
+  
