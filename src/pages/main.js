@@ -8,6 +8,7 @@ import LoanAgingSummary from '@/components/LoanAgingSummary';
 import { Button, Typography } from '@mui/material';
 import UserUploader from '@/components/UserUploader';
 import { Paper, Box } from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
 
 export default function MainPage() {
   const [user, setUser] = useState(null)
@@ -98,7 +99,20 @@ export default function MainPage() {
       handleLogout={handleLogout}
       sidebar={
         <>
-          <Button variant="contained" onClick={handleOpenModal}>
+          <Button 
+            variant="contained"
+            onClick={handleOpenModal}
+            startIcon={<AddIcon />}
+            color='success'
+            sx={{
+              borderRadius: 3,
+              boxShadow: 6,
+              fontSize: '1rem',
+              paddingY: 1.5,
+              paddingX: 3,
+              textTransform: 'none'
+            }}
+            >
             Nuevo préstamo
           </Button>
           <Box sx={{ minWidth: '250px', flexGrow: 1 }}>

@@ -17,7 +17,8 @@ import {
     p: 4,
     borderRadius: 2,
   };
-  
+
+ 
   export default function LoanRegisterModal({ open, handleClose, mode = 'entrega', selectedLoan = null, onSuccess }) {
     const [sapid, setSapid] = useState('');
     const [nombreRecibe, setNombreRecibe] = useState('');
@@ -43,7 +44,9 @@ import {
     };
   
     useEffect(() => {
-      if (!sapid) {
+      const cleanedSapid = sapid.trim();
+
+      if (!cleanedSapid) {
         setNombreRecibe('');
         setUserNotFound(false);
         return;
@@ -53,7 +56,7 @@ import {
         const { data, error } = await supabase
           .from('users')
           .select('nombre')
-          .eq('sapid', sapid)
+          .eq('sapid', cleanedSapid)
           .single();
   
         if (data) {
@@ -72,12 +75,14 @@ import {
         event.preventDefault();
         setLoading(true);
         setError('');
+
+        const cleanedSapid = sapid.trim();
       
         try {
           if (isEntrega) {
             const { error } = await supabase.from('loans').insert([
               {
-                sapid_usuario: sapid,
+                sapid_usuario: cleanedSapid,
                 nombre_recibe: nombreRecibe || 'Usuario no registrado',
                 dias_prestamo: parseInt(diasPrestamo),
                 tipo_equipo: tipoEquipo,
@@ -96,7 +101,7 @@ import {
               .from('loans')
               .update({
                 received_at: new Date().toISOString(),
-                sapid_recepcion: sapid,
+                sapid_recepcion: cleanedSapid,
                 nombre_entrega: nombreRecibe || 'Usuario no registrado',
               })
               .eq('id', selectedLoan.id);

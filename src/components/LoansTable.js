@@ -71,10 +71,11 @@ export default function LoansTable() {
       {loading ? (
         <CircularProgress />
       ) : (
-        <TableContainer sx={{ maxHeight: 500 }}>
+        <TableContainer sx={{ maxHeight: 600 }}>
            <Table stickyHeader aria-label="sticky table">
             <TableHead>
               <TableRow>
+                <TableCell sx={{ backgroundColor: '#424242', color: '#fff' }}>#</TableCell>
                 <TableCell sx={{ backgroundColor: '#424242', color: '#fff' }}>Usuario</TableCell>
                 <TableCell sx={{ backgroundColor: '#424242', color: '#fff' }}>Serial</TableCell>
                 <TableCell sx={{ backgroundColor: '#424242', color: '#fff' }}>Puesto</TableCell>
@@ -84,12 +85,19 @@ export default function LoansTable() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {loans.map((loan) => (
+              {loans.map((loan, index) => (
                 <TableRow
                   key={loan.id}
                   onClick={() => handleRowClick(loan)}
-                  sx={{ cursor: 'pointer' }}
+                  sx={{
+                    cursor: 'pointer',
+                    transition: 'background-color 0.2s ease',
+                    '&:hover': {
+                      backgroundColor: '#f5f5f5', // Puedes usar un color suave de fondo
+                    },
+                  }}
                 >
+                  <TableCell>{loans.length - index}</TableCell> {/* ← Contador */}
                   <TableCell>{loan.nombre_recibe}</TableCell>
                   <TableCell>{loan.serie}</TableCell>
                   <TableCell>{loan.users?.puesto}</TableCell>
