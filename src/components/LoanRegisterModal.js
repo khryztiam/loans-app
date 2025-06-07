@@ -133,7 +133,7 @@ import {
                 label="SAP ID"
                 fullWidth
                 value={sapid}
-                onChange={(e) => setSapid(e.target.value)}
+                onChange={(e) => setSapid(e.target.value.trim())}
                 required
               />
               <TextField
@@ -171,6 +171,8 @@ import {
                     <MenuItem value="Tablet">Tablet</MenuItem>
                     <MenuItem value="Escáner">Escáner</MenuItem>
                     <MenuItem value="Impresora">Impresora</MenuItem>
+                    <MenuItem value="Otro">Extension</MenuItem>
+                    <MenuItem value="Otro">UPS</MenuItem>
                   </Select>
                 </FormControl>
                 <TextField
