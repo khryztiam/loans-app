@@ -1,10 +1,6 @@
-import { useEffect, useState } from 'react';
-import {
-  Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
-  Paper, Typography, CircularProgress
-} from '@mui/material';
-import { supabase } from '../lib/supabase';
-import LoanRegisterModal from './LoanRegisterModal';
+import { useEffect, useState } from "react";
+import { supabase } from "../lib/supabase";
+import LoanRegisterModal from "./LoanRegisterModal";
 
 export default function LoansTable() {
   const [loans, setLoans] = useState([]);
@@ -15,15 +11,15 @@ export default function LoansTable() {
   const fetchLoans = async () => {
     setLoading(true);
     const { data, error } = await supabase
-      .from('loans')
+      .from("loans")
       .select(
-        `id, nombre_recibe, serie, created_at, users(puesto, descripcion)`
+        `id, nombre_recibe, tipo_equipo, serie, created_at, users(puesto, descripcion)`
       )
-      .is('received_at', null)
-      .order('created_at', { ascending: false });
+      .is("received_at", null)
+      .order("created_at", { ascending: false });
 
     if (error) {
-      console.error('Error cargando préstamos:', error.message);
+      console.error("Error cargando préstamos:", error.message);
     } else {
       setLoans(data);
     }
@@ -34,12 +30,12 @@ export default function LoansTable() {
     fetchLoans();
 
     const channel = supabase
-      .channel('realtime-loans')
+      .channel("realtime-loans")
       .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'loans' },
+        "postgres_changes",
+        { event: "*", schema: "public", table: "loans" },
         (payload) => {
-          console.log('Cambio en loans:', payload);
+          console.log("Cambio en loans:", payload);
           fetchLoans(); // Refresca los préstamos cada vez que cambia algo
         }
       )
@@ -65,50 +61,55 @@ export default function LoansTable() {
 
   return (
     <>
-      <Typography variant="h6" gutterBottom>
-        Historial de Préstamos
-      </Typography>
+      <div className="loan-header">
+        <h2 className="titulo">Historial de Préstamos</h2>
+      </div>
+
       {loading ? (
-        <CircularProgress />
+        <div className="loading">Cargando...</div>
       ) : (
-        <TableContainer sx={{ maxHeight: 600 }}>
-           <Table stickyHeader aria-label="sticky table">
-            <TableHead>
-              <TableRow>
-                <TableCell sx={{ backgroundColor: '#424242', color: '#fff' }}>#</TableCell>
-                <TableCell sx={{ backgroundColor: '#424242', color: '#fff' }}>Usuario</TableCell>
-                <TableCell sx={{ backgroundColor: '#424242', color: '#fff' }}>Serial</TableCell>
-                <TableCell sx={{ backgroundColor: '#424242', color: '#fff' }}>Puesto</TableCell>
-                <TableCell sx={{ backgroundColor: '#424242', color: '#fff' }}>Departamento</TableCell>
-                <TableCell sx={{ backgroundColor: '#424242', color: '#fff' }}>Fecha de Préstamo</TableCell>
-                <TableCell sx={{ backgroundColor: '#424242', color: '#fff' }}>Días Transcurridos</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {loans.map((loan, index) => (
-                <TableRow
-                  key={loan.id}
-                  onClick={() => handleRowClick(loan)}
-                  sx={{
-                    cursor: 'pointer',
-                    transition: 'background-color 0.2s ease',
-                    '&:hover': {
-                      backgroundColor: '#f5f5f5', // Puedes usar un color suave de fondo
-                    },
-                  }}
-                >
-                  <TableCell>{loans.length - index}</TableCell> {/* ← Contador */}
-                  <TableCell>{loan.nombre_recibe}</TableCell>
-                  <TableCell>{loan.serie}</TableCell>
-                  <TableCell>{loan.users?.puesto}</TableCell>
-                  <TableCell>{loan.users?.descripcion}</TableCell>
-                  <TableCell>{new Date(loan.created_at).toLocaleDateString()}</TableCell>
-                  <TableCell>{calculateDaysDiff(loan.created_at)}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+        <div className="loan-grid">
+          {loans.map((loan, index) => (
+            <div
+              key={loan.id}
+              className="loan-card"
+              onClick={() => handleRowClick(loan)}
+            >
+              <div className="card-header">
+                <span className="card-id">#{loans.length - index}</span>
+                <h3 className="card-usuario">{loan.nombre_recibe}</h3>
+              </div>
+
+              <div className="card-section">
+                <p>
+                  <strong>Equipo:</strong> {loan.tipo_equipo || "—"}
+                </p>
+                <p>
+                  <strong>Serie:</strong> {loan.serie}
+                </p>
+              </div>
+
+              <div className="card-section">
+                <p>
+                  <strong>Puesto:</strong> {loan.users?.puesto}
+                </p>
+                <p>
+                  <strong>Departamento:</strong> {loan.users?.descripcion}
+                </p>
+              </div>
+
+              <div className="card-footer">
+                <p>
+                  <strong>Fecha:</strong>{" "}
+                  {new Date(loan.created_at).toLocaleDateString()}
+                </p>
+                <p>
+                  <strong>Días:</strong> {calculateDaysDiff(loan.created_at)}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
       )}
 
       <LoanRegisterModal

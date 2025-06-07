@@ -1,5 +1,4 @@
 // components/LoanAgingSummary.js
-import { Card, CardContent, Typography, Box } from '@mui/material';
 import { differenceInDays, parseISO } from 'date-fns';
 
 const ranges = [
@@ -29,22 +28,9 @@ export default function LoanAgingSummary({ loans = [] }) {
   return (
     <div className="aging-summary-grid">
       {agingData.map((range) => (
-        <div className="aging-card" key={range.label}>
-          <Card
-            sx={{
-              backgroundColor: range.color,
-              color: 'white',
-              height: '100%',
-              width: '100%',
-            }}
-          >
-            <CardContent>
-              <Typography variant="subtitle1"><strong>{range.label}</strong></Typography>
-              <Typography variant="body1">
-                {range.count} equipos
-              </Typography>
-            </CardContent>
-          </Card>
+        <div className="aging-card" key={range.label} style={{ backgroundColor: range.color }}>
+          <div className="aging-label">{range.label}</div>
+          <div className="aging-count">{range.count} equipos</div>
         </div>
       ))}
     </div>

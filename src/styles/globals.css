@@ -97,3 +97,29 @@ body {
     flex-direction: column;
   }
 }
+
+.btn-nuevo {
+  width: 100%;
+  background-color: #4367b9;
+  color: white;
+  font-size: 1.2rem;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.btn-nuevo:hover {
+  background-color: #1b2f5e;
+}
+
+.loan-aging-wrapper {
+  min-width: 250px;
+  flex-grow: 1;
+  background-color: gray;
+  padding: 20px;
+  border-radius: 8px;
+}

@@ -1,94 +1,126 @@
 .layout-container {
-    height: 100vh;
-    display: flex;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  font-family: "Segoe UI", sans-serif;
+}
+
+.layout-header {
+  background-color: #1976d2;
+  color: white;
+  padding: 12px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.layout-title {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.layout-toolbar {
+  display: flex;
+  justify-content: space-between;
+}
+
+.layout-user {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.layout-user span {
+  font-size: 0.95rem;
+}
+
+.layout-user button {
+  background: red;
+  color: white;
+  border: 1px solid white;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.layout-user button:hover {
+  background-color: rgb(139, 14, 14);
+}
+
+.layout-content {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  padding: 1rem;
+  gap: 1rem;
+}
+
+.layout-main {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px;
+  background-color: #37393a;
+}
+
+.layout-sidebar {
+  padding: 12px 24px;
+  background-color: #f0f0f0;
+  border-bottom: 1px solid #ddd;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+/* Responsivo para móviles */
+@media (max-width: 768px) {
+  .layout-content {
     flex-direction: column;
   }
-  
-  .layout-toolbar {
-    display: flex;
-    justify-content: space-between;
-  }
-  
-  .layout-user-section {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-  }
-  
-  .layout-content {
-    flex: 1;
-    display: flex;
-    flex-direction: row;
-    padding: 1rem;
-    gap: 1rem;
-  }
-  
-  .layout-main {
-    flex: 3;
-    background-color: #fff;
-    padding: 1rem;
-    border-radius: 8px;
-    overflow-y: auto;
-  }
-  
+
+  .layout-main,
   .layout-sidebar {
-    flex: 1;
-    background-color: #f4f4f4;
-    padding: 1rem;
-    border-radius: 8px;
-    overflow-y: auto;
+    width: 100%;
   }
-  
-  /* Responsivo para móviles */
-  @media (max-width: 768px) {
-    .layout-content {
-      flex-direction: column;
-    }
-  
-    .layout-main,
-    .layout-sidebar {
-      width: 100%;
-    }
-  }
-  
+}
+
 /* Estilo para el contenedor flotante */
 .floating-upload-container {
-    position: fixed;
-    bottom: 20px;  /* Ajusta la distancia desde la parte inferior */
-    right: 20px;   /* Ajusta la distancia desde la parte derecha */
-    background-color: white;
-    border: 2px solid #3f51b5;
-    border-radius: 10px;
-    padding: 20px;
-    width: 250px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    z-index: 1000;  /* Asegura que esté por encima de otros elementos */
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-  
-  .floating-upload-button {
-    position: fixed;
-    bottom: 80px;  /* Ajusta la distancia desde la parte inferior */
-    right: 20px;   /* Ajusta la distancia desde la parte derecha */
-    background-color: #3f51b5;
-    color: white;
-    border: none;
-    border-radius: 50%;
-    width: 60px;
-    height: 60px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 30px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    cursor: pointer;
-    transition: all 0.3s ease;
-  }
-  
-  .floating-upload-button:hover {
-    background-color: #303f9f;
-  }
-  
-  
+  position: fixed;
+  bottom: 20px; /* Ajusta la distancia desde la parte inferior */
+  right: 20px; /* Ajusta la distancia desde la parte derecha */
+  background-color: white;
+  border: 2px solid #3f51b5;
+  border-radius: 10px;
+  padding: 20px;
+  width: 250px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 1000; /* Asegura que esté por encima de otros elementos */
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.floating-upload-button {
+  position: fixed;
+  bottom: 80px; /* Ajusta la distancia desde la parte inferior */
+  right: 20px; /* Ajusta la distancia desde la parte derecha */
+  background-color: #3f51b5;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 30px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.floating-upload-button:hover {
+  background-color: #303f9f;
+}

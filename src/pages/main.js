@@ -1,44 +1,41 @@
-import { useEffect, useState } from 'react'
-import { supabase } from '../lib/supabase'
-import { useRouter } from 'next/router'
-import Layout from '../components/Layout';
-import LoansTable from '@/components/LoansTable';
-import LoanRegisterModal from '@/components/LoanRegisterModal';
-import LoanAgingSummary from '@/components/LoanAgingSummary';
-import { Button, Typography } from '@mui/material';
-import UserUploader from '@/components/UserUploader';
-import { Paper, Box } from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
+import { useEffect, useState } from "react";
+import { supabase } from "../lib/supabase";
+import { useRouter } from "next/router";
+import Layout from "../components/Layout";
+import LoansTable from "@/components/LoansTable";
+import LoanRegisterModal from "@/components/LoanRegisterModal";
+import LoanAgingSummary from "@/components/LoanAgingSummary";
+import UserUploader from "@/components/UserUploader";
 
 export default function MainPage() {
-  const [user, setUser] = useState(null)
-  const router = useRouter()
+  const [user, setUser] = useState(null);
+  const router = useRouter();
   const [openModal, setOpenModal] = useState(false);
   const [loansData, setLoansData] = useState([]);
 
   // --- ✅ FUNCIONES ---
   const fetchLoans = async () => {
-    const { data, error } = await supabase.from('loans').select('*');
+    const { data, error } = await supabase.from("loans").select("*");
     if (!error) {
       setLoansData(data);
     } else {
-      console.error('Error al obtener préstamos:', error);
+      console.error("Error al obtener préstamos:", error);
     }
   };
 
   const fetchUser = async () => {
-    const { data } = await supabase.auth.getUser()
+    const { data } = await supabase.auth.getUser();
     if (data?.user) {
-      setUser(data.user)
+      setUser(data.user);
     } else {
-      router.push('/')
+      router.push("/");
     }
-  }
+  };
 
   const handleLogout = async () => {
-    await supabase.auth.signOut()
-    router.push('/')
-  }
+    await supabase.auth.signOut();
+    router.push("/");
+  };
 
   const handleOpenModal = () => setOpenModal(true);
   const handleCloseModal = () => setOpenModal(false);
@@ -50,30 +47,30 @@ export default function MainPage() {
 
     // Configurar suscripción a cambios en tiempo real
     const loansSubscription = supabase
-      .channel('loans-real-time')
+      .channel("loans-real-time")
       .on(
-        'postgres_changes',
+        "postgres_changes",
         {
-          event: '*', // Escucha todos los eventos (INSERT, UPDATE, DELETE)
-          schema: 'public',
-          table: 'loans'
+          event: "*", // Escucha todos los eventos (INSERT, UPDATE, DELETE)
+          schema: "public",
+          table: "loans",
         },
         (payload) => {
           // Manejar diferentes tipos de eventos
           switch (payload.eventType) {
-            case 'INSERT':
-              setLoansData(current => [...current, payload.new]);
+            case "INSERT":
+              setLoansData((current) => [...current, payload.new]);
               break;
-            case 'UPDATE':
-              setLoansData(current => 
-                current.map(loan => 
+            case "UPDATE":
+              setLoansData((current) =>
+                current.map((loan) =>
                   loan.id === payload.new.id ? payload.new : loan
                 )
               );
               break;
-            case 'DELETE':
-              setLoansData(current => 
-                current.filter(loan => loan.id !== payload.old.id)
+            case "DELETE":
+              setLoansData((current) =>
+                current.filter((loan) => loan.id !== payload.old.id)
               );
               break;
             default:
@@ -81,7 +78,7 @@ export default function MainPage() {
           }
         }
       )
-      .subscribe()
+      .subscribe();
 
     // Limpieza al desmontar el componente
     return () => {
@@ -94,44 +91,31 @@ export default function MainPage() {
   }, [router]);
 
   return (
-    <Layout 
-      user={user} 
+    <Layout
+      user={user}
       handleLogout={handleLogout}
       sidebar={
         <>
-          <Button 
-            variant="contained"
-            onClick={handleOpenModal}
-            startIcon={<AddIcon />}
-            color='success'
-            sx={{
-              borderRadius: 3,
-              boxShadow: 6,
-              fontSize: '1rem',
-              paddingY: 1.5,
-              paddingX: 3,
-              textTransform: 'none'
-            }}
-            >
-            Nuevo préstamo
-          </Button>
-          <Box sx={{ minWidth: '250px', flexGrow: 1 }}>
+          <div className="loan-aging-wrapper">
             <LoanAgingSummary loans={loansData} />
-          </Box>
+          </div>
+          <button className="btn-nuevo" onClick={handleOpenModal}>
+            ➕ Nuevo préstamo
+          </button>
         </>
       }
     >
-      <LoansTable 
-        loans={loansData} 
+      <LoansTable
+        loans={loansData}
         fetchLoans={fetchLoans} // Mantenemos por si se necesita recarga manual
       />
       <UserUploader />
-      <LoanRegisterModal 
+      <LoanRegisterModal
         open={openModal}
         handleClose={handleCloseModal}
         mode="entrega"
         // Ya no necesitamos onSuccess porque usamos realtime
       />
     </Layout>
-  )
+  );
 }
