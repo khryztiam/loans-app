@@ -1,13 +1,15 @@
-import React, { useState } from 'react';
-import ExcelJS from 'exceljs';
-import { supabase } from '../lib/supabase';
-import { Typography, IconButton } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close'; // Ícono para cerrar el div
+import React, { useState } from "react";
+import ExcelJS from "exceljs";
+import { supabase } from "../lib/supabase";
 
 export default function UserUploader() {
-  const [isOpen, setIsOpen] = useState(false);  // Estado para controlar la apertura del uploader
+  const [isOpen, setIsOpen] = useState(false);
+  const [summary, setSummary] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleFileUpload = async (event) => {
+    setIsLoading(true);
+
     const file = event.target.files[0];
     if (!file) return;
 
@@ -19,87 +21,98 @@ export default function UserUploader() {
     const excelUsers = [];
 
     worksheet.eachRow((row, rowNumber) => {
-      if (rowNumber === 1) return; // omitir encabezados
-      const [sapid, nombre, descripcion, grupo, puesto, supervisor] = row.values.slice(1);
+      if (rowNumber === 1) return;
+      let [sapid, nombre, descripcion, grupo, puesto, supervisor] =
+        row.values.slice(1);
       if (sapid) {
-        excelUsers.push({ sapid, nombre, descripcion, grupo, puesto, supervisor });
+        sapid = String(sapid).trim();
+        excelUsers.push({
+          sapid,
+          nombre,
+          descripcion,
+          grupo,
+          puesto,
+          supervisor,
+        });
       }
     });
 
-    const excelSapIds = excelUsers.map((u) => u.sapid);
+    // Eliminar duplicados en Excel
+    const uniqueExcelUsers = Array.from(
+      new Map(excelUsers.map((u) => [u.sapid, u])).values()
+    );
 
-    // 1. Obtener todos los usuarios actuales en Supabase
-    const { data: currentUsers, error: fetchError } = await supabase.from('users').select('sapid');
-    if (fetchError) {
-      console.error('Error al obtener usuarios existentes:', fetchError);
+    // Hacer UPSERT (insertar nuevos y actualizar existentes)
+    const { error: upsertError, count } = await supabase
+      .from("users")
+      .upsert(uniqueExcelUsers, { onConflict: ["sapid"], count: "exact" });
+
+    if (upsertError) {
+      console.error("Error al hacer upsert:", upsertError);
       return;
     }
 
-    const currentSapIds = currentUsers.map((u) => u.sapid);
+    setSummary({
+      totalExcel: excelUsers.length,
+      upserted: count ?? uniqueExcelUsers.length, // algunos planes de Supabase dev no devuelven count
+    });
 
-    // 2. Determinar los que deben eliminarse (en Supabase pero no en Excel)
-    const toDelete = currentSapIds.filter((sapid) => !excelSapIds.includes(sapid));
-
-    // 3. Determinar los que deben insertarse (en Excel pero no en Supabase)
-    const toInsert = excelUsers.filter((u) => !currentSapIds.includes(u.sapid));
-
-    // 4. Ejecutar eliminaciones
-    if (toDelete.length > 0) {
-      const { error: deleteError } = await supabase
-        .from('users')
-        .delete()
-        .in('sapid', toDelete);
-
-      if (deleteError) {
-        console.error('Error al eliminar usuarios dados de baja:', deleteError);
-        return;
-      }
-    }
-
-    // 5. Ejecutar inserciones
-    if (toInsert.length > 0) {
-      const { error: insertError } = await supabase
-        .from('users')
-        .insert(toInsert);
-
-      if (insertError) {
-        console.error('Error al insertar usuarios nuevos:', insertError);
-        return;
-      }
-    }
-
-    alert(`Carga completada. Insertados: ${toInsert.length}, Eliminados: ${toDelete.length}`);
+    setIsLoading(false);
   };
 
+  const resetModal = () => {
+    setSummary(null);
+    setIsOpen(false);
+    setIsLoading(false);
+  };
   return (
     <>
-      {/* Botón flotante para abrir/cerrar el div */}
       <button
         className="floating-upload-button"
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={() => setIsOpen(true)}
       >
         +
       </button>
 
-      {/* Div flotante para el uploader */}
       {isOpen && (
-        <div className="floating-upload-container">
-          <Typography variant="h5">Cargar usuarios desde Excel</Typography>
-
-          {/* Botón para cerrar el div flotante */}
-          <IconButton
-            onClick={() => setIsOpen(false)} // Cerrar el div al hacer clic
-            sx={{ position: 'absolute', top: '10px', right: '10px' }}
+        <div className="modal-overlay2" onClick={resetModal}>
+          <div
+            className="modal-content2"
+            onClick={(e) => e.stopPropagation()} // para evitar que clic afuera lo cierre
           >
-            <CloseIcon />
-          </IconButton>
+            <h2>Cargar usuarios desde Excel</h2>
 
-          <input
-            type="file"
-            accept=".xlsx"
-            onChange={handleFileUpload}
-            style={{ marginTop: '20px' }}
-          />
+            {!summary && (
+              <>
+                <input
+                  type="file"
+                  accept=".xlsx"
+                  onChange={handleFileUpload}
+                  disabled={isLoading}
+                  className="file-input"
+                />
+                {isLoading && (
+                  <p className="loading-text">Procesando archivo...</p>
+                )}
+              </>
+            )}
+
+            {summary && (
+              <div className="upload-summary">
+                <p>
+                  <strong>Total en archivo:</strong> {summary.totalExcel}
+                </p>
+                <p>
+                  <strong>Registros insertados o actualizados:</strong>{" "}
+                  {summary.upserted}
+                </p>
+              </div>
+            )}
+
+            <button className="modal-close-button2" onClick={resetModal}>
+              Cerrar
+            </button>
+          </div>
         </div>
       )}
     </>
