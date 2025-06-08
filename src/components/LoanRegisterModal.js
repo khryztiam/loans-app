@@ -1,32 +1,32 @@
-import { useEffect, useState } from 'react';
-import { supabase } from '../lib/supabase';
+import { useEffect, useState } from "react";
+import { supabase } from "../lib/supabase";
 
 export default function LoanRegisterModal({
   open,
   handleClose,
-  mode = 'entrega',
+  mode = "entrega",
   selectedLoan = null,
   onSuccess,
 }) {
-  const [sapid, setSapid] = useState('');
-  const [nombreRecibe, setNombreRecibe] = useState('');
-  const [diasPrestamo, setDiasPrestamo] = useState('');
-  const [tipoEquipo, setTipoEquipo] = useState('');
-  const [tag, setTag] = useState('');
+  const [sapid, setSapid] = useState("");
+  const [nombreRecibe, setNombreRecibe] = useState("");
+  const [diasPrestamo, setDiasPrestamo] = useState("");
+  const [tipoEquipo, setTipoEquipo] = useState("");
+  const [tag, setTag] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [userNotFound, setUserNotFound] = useState(false);
 
-  const isEntrega = mode === 'entrega';
-  const isRecepcion = mode === 'recepcion';
+  const isEntrega = mode === "entrega";
+  const isRecepcion = mode === "recepcion";
 
   const resetForm = () => {
-    setSapid('');
-    setNombreRecibe('');
-    setDiasPrestamo('');
-    setTipoEquipo('');
-    setTag('');
-    setError('');
+    setSapid("");
+    setNombreRecibe("");
+    setDiasPrestamo("");
+    setTipoEquipo("");
+    setTag("");
+    setError("");
     setUserNotFound(false);
   };
 
@@ -34,23 +34,23 @@ export default function LoanRegisterModal({
     const cleanedSapid = sapid.trim();
 
     if (!cleanedSapid) {
-      setNombreRecibe('');
+      setNombreRecibe("");
       setUserNotFound(false);
       return;
     }
 
     const fetchNombre = async () => {
       const { data, error } = await supabase
-        .from('users')
-        .select('nombre')
-        .eq('sapid', cleanedSapid)
+        .from("users")
+        .select("nombre")
+        .eq("sapid", cleanedSapid)
         .single();
 
       if (data) {
         setNombreRecibe(data.nombre);
         setUserNotFound(false);
       } else {
-        setNombreRecibe('Usuario no registrado');
+        setNombreRecibe("Usuario no registrado");
         setUserNotFound(true);
       }
     };
@@ -61,16 +61,16 @@ export default function LoanRegisterModal({
   const handleSubmit = async (event) => {
     event.preventDefault();
     setLoading(true);
-    setError('');
+    setError("");
 
     const cleanedSapid = sapid.trim();
 
     try {
       if (isEntrega) {
-        const { error } = await supabase.from('loans').insert([
+        const { error } = await supabase.from("loans").insert([
           {
             sapid_usuario: cleanedSapid,
-            nombre_recibe: nombreRecibe || 'Usuario no registrado',
+            nombre_recibe: nombreRecibe || "Usuario no registrado",
             dias_prestamo: parseInt(diasPrestamo),
             tipo_equipo: tipoEquipo,
             serie: tag,
@@ -84,13 +84,13 @@ export default function LoanRegisterModal({
         handleClose();
       } else if (isRecepcion && selectedLoan) {
         const { error } = await supabase
-          .from('loans')
+          .from("loans")
           .update({
             received_at: new Date().toISOString(),
             sapid_recepcion: cleanedSapid,
-            nombre_entrega: nombreRecibe || 'Usuario no registrado',
+            nombre_entrega: nombreRecibe || "Usuario no registrado",
           })
-          .eq('id', selectedLoan.id);
+          .eq("id", selectedLoan.id);
 
         if (error) throw error;
 
@@ -99,20 +99,44 @@ export default function LoanRegisterModal({
         handleClose();
       }
     } catch (error) {
-      setError(isEntrega ? 'Error al registrar el préstamo' : 'Error al registrar la recepción');
-      console.error('Error en el formulario:', error);
+      setError(
+        isEntrega
+          ? "Error al registrar el préstamo"
+          : "Error al registrar la recepción"
+      );
+      console.error("Error en el formulario:", error);
     } finally {
       setLoading(false);
     }
+  };
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") {
+        handleCloseAndReset();
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
+  const handleCloseAndReset = () => {
+    resetForm();
+    handleClose();
   };
 
   // Aquí va el renderizado del modal con validación de `open`
   if (!open) return null;
 
   return (
-    <div className="modal-overlay" onClick={handleClose}>
+    <div className="modal-overlay" onClick={handleCloseandReset}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-        <h2>{isEntrega ? 'Registrar nuevo préstamo' : 'Registrar recepción de equipo'}</h2>
+        <h2>
+          {isEntrega
+            ? "Registrar nuevo préstamo"
+            : "Registrar recepción de equipo"}
+        </h2>
         <form onSubmit={handleSubmit}>
           <label>SAP ID</label>
           <input
@@ -127,10 +151,12 @@ export default function LoanRegisterModal({
             type="text"
             value={nombreRecibe}
             disabled
-            className={userNotFound ? 'error' : ''}
+            className={userNotFound ? "error" : ""}
           />
           {userNotFound && (
-            <small className="error-text">Usuario no registrado en la base de datos</small>
+            <small className="error-text">
+              Usuario no registrado en la base de datos
+            </small>
           )}
 
           {isEntrega && (
@@ -170,8 +196,13 @@ export default function LoanRegisterModal({
 
           {isRecepcion && selectedLoan && (
             <>
-              <p><strong>TAG / Serie Equipo:</strong> {selectedLoan.serie}</p>
-              <p><strong>Préstamo registrado:</strong> {new Date(selectedLoan.created_at).toLocaleString()}</p>
+              <p>
+                <strong>TAG / Serie Equipo:</strong> {selectedLoan.serie}
+              </p>
+              <p>
+                <strong>Préstamo registrado:</strong>{" "}
+                {new Date(selectedLoan.created_at).toLocaleString()}
+              </p>
             </>
           )}
 
@@ -179,10 +210,10 @@ export default function LoanRegisterModal({
 
           <button type="submit" disabled={loading}>
             {loading
-              ? 'Guardando...'
+              ? "Guardando..."
               : isEntrega
-              ? 'Registrar préstamo'
-              : 'Registrar recepción'}
+              ? "Registrar préstamo"
+              : "Registrar recepción"}
           </button>
         </form>
       </div>
