@@ -130,7 +130,7 @@ export default function LoanRegisterModal({
   if (!open) return null;
 
   return (
-    <div className="modal-overlay" onClick={handleCloseandReset}>
+    <div className="modal-overlay" onClick={handleCloseAndReset}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <h2>
           {isEntrega
