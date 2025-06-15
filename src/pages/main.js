@@ -95,26 +95,22 @@ export default function MainPage() {
       user={user}
       handleLogout={handleLogout}
       sidebar={
-        <>
-          <div className="loan-aging-wrapper">
-            <LoanAgingSummary loans={loansData} />
-          </div>
-          <button className="btn-nuevo" onClick={handleOpenModal}>
-            ➕ Nuevo préstamo
-          </button>
-        </>
+        <div className="loan-aging-wrapper">
+          <LoanAgingSummary loans={loansData} />
+        </div>
       }
     >
-      <LoansTable
-        loans={loansData}
-        fetchLoans={fetchLoans} // Mantenemos por si se necesita recarga manual
-      />
+      <div className="main-content-wrapper">
+        <button className="btn-nuevo" onClick={handleOpenModal}>
+          ➕ Nuevo préstamo
+        </button>
+        <LoansTable loans={loansData} fetchLoans={fetchLoans} />
+      </div>
       <UserUploader />
       <LoanRegisterModal
         open={openModal}
         handleClose={handleCloseModal}
         mode="entrega"
-        // Ya no necesitamos onSuccess porque usamos realtime
       />
     </Layout>
   );

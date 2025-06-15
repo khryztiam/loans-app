@@ -22,12 +22,6 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-* {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
-}
-
 .title{
   padding: 10px;
   align-items: center;
@@ -85,16 +79,21 @@ body {
   box-sizing: border-box;
 }
 
+/* Responsivo para móviles */
 @media (max-width: 768px) {
-  .container {
-    margin-left: 0;
-    width: 100%;
-    padding-top: 80px;
-    align-items: stretch; /* o center según prefieras */
+  .layout-content {
+    flex-direction: column;
   }
 
-  .app-container {
-    flex-direction: column;
+  .layout-sidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid #ddd;
+    order: 1; /* Sidebar arriba en móviles */
+  }
+  
+  .layout-main {
+    order: 2; /* Main abajo en móviles */
   }
 }
 
@@ -117,9 +116,31 @@ body {
 }
 
 .loan-aging-wrapper {
-  min-width: 250px;
+  min-width: 100%;
   flex-grow: 1;
-  background-color: gray;
+  background-color: rgb(0, 0, 0);
   padding: 10px;
   border-radius: 8px;
+}
+
+/* Estilo para el botón en el main */
+.main-content-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.btn-nuevo {
+  padding: 10px 16px;
+  background-color: #258514;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  align-self: flex-start; /* Para que no ocupe todo el ancho */
+}
+
+.btn-nuevo:hover {
+  background-color: #15c040;
 }

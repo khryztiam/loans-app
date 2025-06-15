@@ -1,8 +1,8 @@
 .layout-container {
-  height: 100vh;
+  height: 100%;
   display: flex;
   flex-direction: column;
-  overflow: auto;
+  overflow: hidden;
   font-family: "Segoe UI", sans-serif;
 }
 
@@ -13,6 +13,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-shrink: 0;
 }
 
 .layout-title {
@@ -52,24 +53,23 @@
 .layout-content {
   flex: 1;
   display: flex;
-  flex-direction: row;
-  padding: 1rem;
-  gap: 1rem;
+  overflow: auto; /* Permite scroll dentro del contenido */
 }
 
 .layout-main {
   flex: 1;
-  padding: 24px;
+  padding: 1rem;
   background-color: #37393a;
+  overflow-y: auto;
 }
 
 .layout-sidebar {
-  padding: 12px 24px;
-  background-color: #f0f0f0;
-  border-bottom: 1px solid #ddd;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
+  width: 250px;
+  padding: 0.5rem;
+  background-color: #000000;
+  border-right: 1px solid #ddd;
+  overflow-y: auto;
+  flex-shrink: 0;
 }
 
 /* Responsivo para móviles */

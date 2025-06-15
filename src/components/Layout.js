@@ -1,5 +1,3 @@
-// components/Layout.js
-
 export default function Layout({ children, sidebar, user, handleLogout }) {
   return (
     <div className="layout-container">
@@ -13,13 +11,12 @@ export default function Layout({ children, sidebar, user, handleLogout }) {
         )}
       </header>
 
-      <section className="layout-sidebar">
-        {sidebar}
-      </section>
-
-      <main className="layout-main">
-        {children}
-      </main>
+      <div className="layout-content">
+        {" "}
+        {/* Este es el nuevo contenedor */}
+        <main className="layout-main">{children}</main>
+        <aside className="layout-sidebar">{sidebar}</aside>
+      </div>
     </div>
   );
 }
