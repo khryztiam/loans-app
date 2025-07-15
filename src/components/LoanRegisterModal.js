@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { supabase } from "../lib/supabase";
 
 export default function LoanRegisterModal({
@@ -16,7 +16,7 @@ export default function LoanRegisterModal({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [userNotFound, setUserNotFound] = useState(false);
-
+  const sapidInputRef = useRef(null);
   const isEntrega = mode === "entrega";
   const isRecepcion = mode === "recepcion";
 
@@ -30,34 +30,39 @@ export default function LoanRegisterModal({
     setUserNotFound(false);
   };
 
-  useEffect(() => {
-    const cleanedSapid = sapid.trim();
+  const handleSapidEnter = async (e) => {
+    if (e.key === "Enter") {
+      const cleaned = sapid.trim();
 
-    if (!cleanedSapid) {
-      setNombreRecibe("");
-      setUserNotFound(false);
-      return;
-    }
-
-    const fetchNombre = async () => {
-      const { data, error } = await supabase
-        .from("users")
-        .select("nombre")
-        .eq("sapid", cleanedSapid)
-        .single();
-
-      if (data) {
-        setNombreRecibe(data.nombre);
-        setUserNotFound(false);
-      } else {
-        setNombreRecibe("Usuario no registrado");
+      // Validación simple
+      if (!/^\d{8}$/.test(cleaned)) {
+        setError("El SAP ID debe tener exactamente 8 dígitos numéricos");
+        setNombreRecibe("");
         setUserNotFound(true);
+        return;
       }
-    };
 
-    fetchNombre();
-  }, [sapid]);
+      try {
+        const { data, error } = await supabase
+          .from("users")
+          .select("nombre")
+          .eq("sapid", cleaned)
+          .single();
 
+        if (error || !data) {
+          setNombreRecibe("Usuario no registrado");
+          setUserNotFound(true);
+        } else {
+          setNombreRecibe(data.nombre);
+          setUserNotFound(false);
+        }
+      } catch (err) {
+        console.error("Error al buscar usuario:", err);
+        setError("Error al buscar el usuario");
+      }
+    }
+  };
+  // Maneja el envío del formulario
   const handleSubmit = async (event) => {
     event.preventDefault();
     setLoading(true);
@@ -126,6 +131,12 @@ export default function LoanRegisterModal({
     handleClose();
   };
 
+  useEffect(() => {
+    if (open && sapidInputRef.current) {
+      sapidInputRef.current.focus();
+    }
+  }, [open]);
+
   // Aquí va el renderizado del modal con validación de `open`
   if (!open) return null;
 
@@ -142,8 +153,11 @@ export default function LoanRegisterModal({
           <input
             type="text"
             value={sapid}
-            onChange={(e) => setSapid(e.target.value.trim())}
+            onChange={(e) => setSapid(e.target.value)}
+            onKeyDown={handleSapidEnter}
+            maxLength={8}
             required
+            ref={sapidInputRef}
           />
 
           <label>Usuario</label>

@@ -7,6 +7,7 @@ export default function LoansTable() {
   const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedLoan, setSelectedLoan] = useState(null);
+  const [message, setMessage] = useState("");
 
   const fetchLoans = async () => {
     setLoading(true);
@@ -64,7 +65,7 @@ export default function LoansTable() {
       <div className="loan-header">
         <h2 className="titulo">Historial de Préstamos</h2>
       </div>
-
+      {message && <div className="success-message">{message}</div>}
       {loading ? (
         <div className="loading">Cargando...</div>
       ) : (
@@ -120,6 +121,10 @@ export default function LoansTable() {
         }}
         mode="recepcion"
         selectedLoan={selectedLoan}
+        onSuccess={() => {
+          setMessage("Recepción registrada correctamente");
+          setTimeout(() => setMessage(""), 3000); // Oculta tras 3 segundos
+        }}
       />
     </>
   );
