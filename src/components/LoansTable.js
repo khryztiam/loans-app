@@ -1,51 +1,10 @@
-import { useEffect, useState } from "react";
-import { supabase } from "../lib/supabase";
+import { useState } from "react";
 import LoanRegisterModal from "./LoanRegisterModal";
 
-export default function LoansTable() {
-  const [loans, setLoans] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [modalOpen, setModalOpen] = useState(false);
-  const [selectedLoan, setSelectedLoan] = useState(null);
-  const [message, setMessage] = useState("");
-
-  const fetchLoans = async () => {
-    setLoading(true);
-    const { data, error } = await supabase
-      .from("loans")
-      .select(
-        `id, nombre_recibe, tipo_equipo, serie, created_at, users(puesto, descripcion)`
-      )
-      .is("received_at", null)
-      .order("created_at", { ascending: false });
-
-    if (error) {
-      console.error("Error cargando préstamos:", error.message);
-    } else {
-      setLoans(data);
-    }
-    setLoading(false);
-  };
-
-  useEffect(() => {
-    fetchLoans();
-
-    const channel = supabase
-      .channel("realtime-loans")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "loans" },
-        (payload) => {
-          console.log("Cambio en loans:", payload);
-          fetchLoans(); // Refresca los préstamos cada vez que cambia algo
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel); // Limpiar al desmontar
-    };
-  }, []);
+export default function LoansTable({ loans, fetchLoans }) { 
+    const [modalOpen, setModalOpen] = useState(false);
+    const [selectedLoan, setSelectedLoan] = useState(null);
+    const [message, setMessage] = useState("");
 
   const calculateDaysDiff = (createdAt) => {
     const now = new Date();
@@ -60,72 +19,68 @@ export default function LoansTable() {
     setModalOpen(true);
   };
 
-  return (
-    <>
-      <div className="loan-header">
-        <h2 className="titulo">Historial de Préstamos</h2>
-      </div>
-      {message && <div className="success-message">{message}</div>}
-      {loading ? (
-        <div className="loading">Cargando...</div>
-      ) : (
-        <div className="loan-grid">
-          {loans.map((loan, index) => (
-            <div
-              key={loan.id}
-              className="loan-card"
-              onClick={() => handleRowClick(loan)}
-            >
-              <div className="card-header">
-                <span className="card-id">#{loans.length - index}</span>
-                <h3 className="card-usuario">{loan.nombre_recibe}</h3>
-              </div>
+  if (!loans || loans.length === 0) {
+        return <div className="loading">No hay préstamos activos.</div>;
+    }
 
-              <div className="card-section">
-                <p>
-                  <strong>Equipo:</strong> {loan.tipo_equipo || "—"}
-                </p>
-                <p>
-                  <strong>Serie:</strong> {loan.serie}
-                </p>
-              </div>
-
-              <div className="card-section">
-                <p>
-                  <strong>Puesto:</strong> {loan.users?.puesto}
-                </p>
-                <p>
-                  <strong>Departamento:</strong> {loan.users?.descripcion}
-                </p>
-              </div>
-
-              <div className="card-footer">
-                <p>
-                  <strong>Fecha:</strong>{" "}
-                  {new Date(loan.created_at).toLocaleDateString()}
-                </p>
-                <p>
-                  <strong>Días:</strong> {calculateDaysDiff(loan.created_at)}
-                </p>
-              </div>
+return (
+        <>
+            <div className="loan-header">
+                <h2 className="titulo">Préstamos Activos</h2> 
             </div>
-          ))}
-        </div>
-      )}
+            {message && <div className="success-message">{message}</div>}
+            
+            <div className="loan-grid">
+                {loans.map((loan, index) => (
+                    // ... (Mapeo de loan-card se mantiene) ...
+                    <div
+                        key={loan.id}
+                        className="loan-card"
+                        onClick={() => handleRowClick(loan)}
+                    >
+                        {/* ... (Contenido de la tarjeta se mantiene) ... */}
+                        <div className="card-header">
+                            <span className="card-id">#{loans.length - index}</span>
+                            <h3 className="card-usuario">{loan.nombre_recibe}</h3>
+                        </div>
 
-      <LoanRegisterModal
-        open={modalOpen}
-        handleClose={() => {
-          setModalOpen(false);
-          setSelectedLoan(null);
-        }}
-        mode="recepcion"
-        selectedLoan={selectedLoan}
-        onSuccess={() => {
-          setMessage("Recepción registrada correctamente");
-          setTimeout(() => setMessage(""), 3000); // Oculta tras 3 segundos
-        }}
-      />
-    </>
-  );
+                        <div className="card-section">
+                            <p><strong>Equipo:</strong> {loan.tipo_equipo || "—"}</p>
+                            <p><strong>Serie:</strong> {loan.serie}</p>
+                        </div>
+                        
+                        <div className="card-section">
+                            <p><strong>Puesto:</strong> {loan.users?.puesto}</p>
+                            <p><strong>Departamento:</strong> {loan.users?.descripcion}</p>
+                        </div>
+
+                        <div className="card-footer">
+                            <p>
+                                <strong>Fecha:</strong>{" "}
+                                {new Date(loan.created_at).toLocaleDateString()}
+                            </p>
+                            <p>
+                                <strong>Días:</strong> {calculateDaysDiff(loan.created_at)}
+                            </p>
+                        </div>
+                    </div>
+                ))}
+            </div>
+
+            <LoanRegisterModal
+                open={modalOpen}
+                handleClose={() => {
+                    setModalOpen(false);
+                    setSelectedLoan(null);
+                }}
+                mode="recepcion"
+                selectedLoan={selectedLoan}
+                onSuccess={() => {
+                    setMessage("Recepción registrada correctamente");
+                    fetchLoans(); // 🛑 Llamada a fetchLoans del padre para refrescar
+                    setTimeout(() => setMessage(""), 3000);
+                }}
+            />
+        </>
+    );
 }

@@ -1,0 +1,408 @@
+/* styles/assignment-form.css */
+
+/* --- Estilos para el Layout del Formulario de Asignación --- */
+.assignment-form-content {
+    /* Opcional: añade padding extra si lo necesitas */
+    padding: 0px;
+}
+
+.assignment-form-content .form-section {
+    padding: 10px;
+    border: 1px solid #eee;
+    margin-bottom: 15px;
+    border-radius: 6px;
+}
+
+/* 1. Agrupación de Campos en una Fila (Serie y Localidad) */
+.assignment-form-content .form-row-group {
+    display: flex;
+    gap: 20px; /* Espacio entre los campos de la fila */
+}
+
+/* 2. Definición del Ancho de Columna */
+.assignment-form-content .form-row-group .form-group.half-width {
+    flex: 1; /* Hace que cada uno ocupe la mitad del espacio disponible */
+    min-width: 0; /* Asegura el correcto encogimiento */
+}
+
+/* 3. Ajuste de la Altura del Select Multiple para ahorrar espacio */
+.assignment-form-content select[multiple] {
+    height: 120px; /* Altura máxima para la lista de accesorios */
+    width: 100%;
+}
+
+/* 4. Estilo para el botón de búsqueda de usuario (para que esté al lado) */
+.assignment-form-content .user-search {
+    padding: 0 10px 10px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-end; /* Alinea los botones y campos en la parte inferior */
+}
+
+.assignment-form-content .user-search input[type="text"] {
+    flex-grow: 1; /* Permite que el input crezca */
+}
+
+.assignment-form-content .user-search button {
+    width: auto; /* Anula el 100% width del CSS base para el botón */
+    margin-top: 0;
+    padding: 8px 15px;
+}
+
+/* 5. Estilo para la caja de información del usuario */
+.assignment-form-content .user-details {
+    padding: 10px;
+    background-color: #e6ffe6; /* Fondo verde claro de éxito */
+    border: 1px solid #8cff8c;
+    border-radius: 4px;
+    margin-top: 10px;
+}
+.assignment-form-content .user-details h4 {
+    margin: 0 0 5px 0;
+    font-size: 14px;
+}
+.assignment-form-content .user-details p {
+    margin: 3px 0;
+    font-size: 12px;
+}
+
+/* --- 1. CONTENEDOR PRINCIPAL Y TÍTULOS --- */
+
+.assignment-management-container {
+    padding: 20px;
+}
+
+.assignment-management-container h2 {
+    font-size: 2rem;
+    color: var(--yazaki-blue-dark);
+    margin-bottom: 25px;
+}
+
+.asignaciones-list h3 {
+    font-size: 1.5rem;
+    color: #333;
+    border-left: 4px solid var(--yazaki-blue-medium);
+    padding-left: 10px;
+    margin-top: 30px;
+    margin-bottom: 10px;
+}
+
+.asignaciones-list p {
+    color: #777;
+    margin-bottom: 20px;
+    font-size: 0.95rem;
+}
+
+/* --- 2. BARRA DE ACCIONES (Botón de Nueva Asignación) --- */
+
+.action-buttons-bar {
+    display: flex;
+    justify-content: flex-end; /* Alinea el botón a la derecha */
+    margin-bottom: 20px;
+}
+
+.new-assignment-button {
+    background-color: var(--yazaki-blue-medium);
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, box-shadow 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.new-assignment-button:hover {
+    background-color: #0069d9;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+
+/* --- 3. ESTILOS DE LA TABLA (AsignacionesTable) --- */
+
+.asignaciones-table-container {
+    width: 100%;
+    overflow-x: auto; /* Permite scroll horizontal en dispositivos pequeños */
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 600px; /* Ancho mínimo para la tabla */
+}
+
+/* Estilos de la cabecera de la tabla */
+.data-table thead th {
+    background-color: #f0f0f0;
+    color: #555;
+    padding: 12px 15px;
+    text-align: left;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    border-bottom: 2px solid #ddd;
+}
+
+/* Estilos de las filas y celdas del cuerpo */
+.data-table tbody td {
+    padding: 10px 15px;
+    border-bottom: 1px solid #eee;
+    color: #333;
+    font-size: 0.95rem;
+}
+
+/* Efecto de cebra y hover */
+.data-table tbody tr:nth-child(even) {
+    background-color: #fafafa; /* Ligeramente gris para efecto cebra */
+}
+
+.data-table tbody tr:hover {
+    background-color: #f5f5f5;
+    cursor: default;
+}
+
+
+/* --- 4. MODAL (Formulario de Asignación) --- */
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6); /* Fondo semi-transparente oscuro */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1050; /* Mayor que el nav bar */
+}
+
+.modal-content {
+    background-color: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    max-width: 500px; /* Ancho moderado para el formulario */
+    width: 90%;
+    max-height: 90vh; /* Altura máxima para evitar desbordamiento */
+    overflow-y: auto; /* Scroll si el contenido es demasiado largo */
+    transform: scale(0.95); /* Animación inicial sutil */
+    animation: scaleIn 0.3s forwards;
+}
+
+.modal-content h3 {
+    margin-top: 0;
+    color: var(--yazaki-blue-dark);
+    border-bottom: 2px solid var(--yazaki-yellow);
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+/* Animación para el modal */
+@keyframes scaleIn {
+    to {
+        transform: scale(1);
+    }
+}
+
+/* --- 5. RESPONSIVO --- */
+
+@media (max-width: 600px) {
+    .assignment-management-container {
+        padding: 10px;
+    }
+    
+    .assignment-management-container h2 {
+        font-size: 1.5rem;
+        margin-bottom: 15px;
+    }
+
+    .action-buttons-bar {
+        justify-content: center; /* Centra el botón en móvil */
+    }
+
+    .new-assignment-button {
+        width: 100%;
+        padding: 15px;
+        font-size: 1.1rem;
+    }
+
+    .modal-content {
+        padding: 20px;
+    }
+}
+
+/* --- 1. CONTENEDOR DE TABLA RESPONSIVA --- */
+
+/* Permite el scroll horizontal en la tabla cuando no hay suficiente espacio */
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    margin-top: 10px;
+}
+
+.assignments-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 800px; /* Asegura que la tabla tenga un ancho mínimo razonable */
+}
+
+/* --- 2. CABECERA (THEAD) --- */
+.assignments-table thead th {
+    background-color: var(--yazaki-blue-medium); /* Color azul corporativo */
+    color: white;
+    padding: 12px 15px;
+    text-align: left;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    border-bottom: 3px solid var(--yazaki-blue-dark);
+}
+
+/* Ajuste de ancho para la columna de acciones */
+.assignments-table thead th:last-child {
+    width: 200px; /* Da suficiente espacio para los botones */
+    text-align: center;
+}
+
+/* --- 3. CUERPO DE LA TABLA (TBODY) --- */
+.assignments-table tbody td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #e0e0e0;
+    color: #333;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+/* Efecto cebra para mejor legibilidad */
+.assignments-table tbody tr:nth-child(even) {
+    background-color: #f7f9fc;
+}
+
+.assignments-table tbody tr:hover {
+    background-color: #eef3ff; /* Azul muy suave al pasar el ratón */
+    cursor: pointer; /* Indica que la fila podría ser clickeable (aunque no lo sea directamente) */
+}
+
+/* Contenido cuando no hay datos */
+.table-responsive + p { 
+    /* Estilo para el <p>No hay equipos asignados...</p> */
+    padding: 20px;
+    text-align: center;
+    color: #777;
+    font-style: italic;
+    font-size: 1.1rem;
+}
+
+/* --- 4. BOTONES DE ACCIÓN (Columna 'Acciones') --- */
+
+.assignments-table tbody td:last-child {
+    text-align: center; /* Centra los botones dentro de la celda */
+    white-space: nowrap; /* Evita que los botones se envuelvan a la siguiente línea */
+    display: flex;
+    gap: 8px; /* Espacio entre botones */
+    justify-content: center;
+    align-items: center;
+    padding: 8px;
+}
+
+.assignments-table button {
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: 600;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+/* Botón Principal: Previsualizar/Imprimir (navegación) */
+.preview-button {
+    background-color: var(--yazaki-blue-medium);
+    color: white;
+}
+.preview-button:hover {
+    background-color: #0069d9;
+    transform: translateY(-1px);
+}
+
+/* Botón Secundario: Descargar PDF */
+.export-pdf-button {
+    background-color: #777;
+    color: white;
+}
+.export-pdf-button:hover {
+    background-color: #555;
+    transform: translateY(-1px);
+}
+
+/* Botón de Edición (Opcional) */
+.edit-button {
+    background-color: var(--yazaki-yellow);
+    color: #333;
+}
+.edit-button:hover {
+    background-color: #e5c100;
+    transform: translateY(-1px);
+}
+
+/* ========================================================= */
+/* --- OPTIMIZACIÓN DE LA VISTA DE IMPRESIÓN (@media print) --- */
+/* ========================================================= */
+
+@media print {
+    /* 1. Resetear y Minimizar Márgenes de Página (Márgenes FÍSICOS de la impresora) */
+    @page {
+        /* Intenta con 0.3cm o 0.5cm. Si pones 0, algunas impresoras pueden recortar. */
+        margin: 0.3cm !important; 
+        padding: 0 !important;
+        size: letter portrait; 
+    }
+
+    /* 2. Resetear Márgenes de HTML y BODY (Márgenes LÓGICOS del documento) */
+    html, body {
+        /* Esto es CRUCIAL para eliminar el margen superior predeterminado del navegador */
+        margin: 0 !important;
+        padding: 0 20px !important;
+        width: 100% !important; 
+        min-height: 100vh; /* Solo para la vista web, pero no debería molestar aquí */
+    }
+
+    /* 3. Contenedor Principal (preview-page y form-container) */
+    .preview-page, .form-container {
+        /* Asegura que no haya margen o padding extra en la parte superior del contenedor */
+        margin: 0 !important;
+        padding: 0 !important; 
+        max-width: 100% !important;
+        border: none !important;
+        box-shadow: none !important;
+    }
+    
+    /* 4. Ocultar Elementos de Interfaz */
+    .layout-navbar, .layout-sidebar, .print-controls, footer:not(.footer) {
+        display: none !important;
+    }
+
+    /* 5. Asegurar Visibilidad de Colores (si tienes fondos o bordes) */
+    .header-table td, .hardware-table td {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+    
+    /* 6. Manejo de Saltos de Página */
+    .confidential, .acknowledgement, .hardware {
+        page-break-inside: avoid;
+    }
+    
+    .header-form {
+        page-break-after: avoid;
+    }
+}

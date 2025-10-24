@@ -14,10 +14,11 @@ const ranges = [
 function calculateAging(loans) {
   const now = new Date();
 
-  // Filtrar solo equipos prestados (no recibidos)
-  const activeLoans = loans.filter(
-    (loan) => loan.sapid_recepcion === null && loan.received_at === null
-  );
+  // ✅ FILTRO ROBUSTO: Se activa si es null, undefined o cadena vacía (para evitar problemas de tipo)
+  const activeLoans = loans.filter((loan) => {
+    const received = loan.received_at;
+    return received === null || received === undefined || received === "";
+  });
 
   // Calcular días para cada préstamo activo
   const loansWithDays = activeLoans.map((loan) => ({
@@ -47,9 +48,10 @@ function calculateAging(loans) {
 
 export default function LoanAgingSummary({ loans = [] }) {
   const agingData = calculateAging(loans);
-  const totalPrestados = loans.filter(
-    (l) => l.sapid_recepcion === null && l.received_at === null
-  ).length;
+  const totalPrestados = loans.filter((l) => {
+    const received = l.received_at;
+    return received === null || received === undefined || received === "";
+  }).length;
 
   return (
     <div className="aging-summary-grid">

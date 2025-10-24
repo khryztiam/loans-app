@@ -1,0 +1,277 @@
+.scroll-wrapper {
+    /* Establece una altura máxima visible (ej: 85vh = 85% de la altura de la ventana) */
+    max-height: 90vh; 
+    
+    /* Permite el desplazamiento vertical si el contenido excede la altura */
+    overflow-y: auto; 
+    
+    /* Agrega un poco de margen para que la barra de scroll no toque el borde del navegador */
+    margin: 10px;
+    
+    /* Opcional: Centrar el contenido de la página si es más angosto que la ventana */
+    display: flex;
+    justify-content: center;
+}
+
+.form-container {
+  width: 792px;
+  margin: 30px auto;
+  padding: 25px 30px;
+  border: 1px solid #999;
+  background: #fff;
+  font-family: "Segoe UI", Arial, sans-serif;
+  font-size: 14px;
+  color: #222;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.1);
+  /* height: 1000px; */
+}
+
+/* Encabezado tipo tabla */
+.header-form {
+  font-family: Arial, sans-serif;
+  width: 100%;
+  margin: 20px 0;
+}
+
+.header-table {
+  width: 100%;
+  border-collapse: collapse;
+  border-bottom: 2px solid #000;
+  margin-bottom: 10px;
+}
+
+.header-form .header-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  border: 2px solid #000;
+}
+
+.header-table td {
+  vertical-align: top;
+  padding: 4px 8px;
+}
+
+/* Columna izquierda (logo + form info) */
+
+.logo-container {
+  margin-bottom: 4px;
+}
+
+.logo-img {
+    max-width: 90%;
+    max-height: 35px;
+    display: block;
+    margin: 0 auto;
+}
+
+.col-left-label {
+    font-size: 14px;
+    vertical-align: bottom;
+    padding-bottom: 0;
+    font-weight: bold;
+    text-align: center;
+}
+.col-left-code {
+    vertical-align: top;
+    padding-top: 0;
+    font-size: 14px;
+    text-align: center;
+    height: 20px; /* Para que quede en una fila individual */
+}
+
+/* Columna central (títulos) */
+.col-main-title {
+    font-size: 26px;
+    font-weight: bold;
+    height: 40px; /* Cubre dos filas pequeñas de la derecha */
+    text-align: center;
+    vertical-align: middle;
+}
+.col-sub-title {
+    font-size: 22px;
+    font-weight: bold;
+    height: 40px; /* Cubre dos filas pequeñas de la derecha */
+    vertical-align: middle;
+    text-align: center;
+}
+
+/* Columna derecha (detalle región / revisión) */
+.col-right-value {
+    font-size: 14px;
+    text-align: left;
+    vertical-align: middle;
+    height: 20px; /* Altura base para las 4 filas de la derecha */
+    text-align: center;
+}
+.col-right-label {
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+}
+
+/* CONFIDENTIAL box */
+.confidential {
+  border: 1px solid #bbb;
+  background-color: #f4f4f4;
+  padding: 10px;
+  font-size: 14px;
+  margin: 15px 0 18px;
+}
+
+/* Texto principal */
+.acknowledgement p {
+  text-align: justify;
+  line-height: 2;
+  margin-bottom: 14px;
+  font-size: 16px;
+}
+
+/* Tabla de hardware */
+.hardware h4 {
+  margin-bottom: 8px;
+  font-size: 16px;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.hardware table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.hardware td {
+  padding: 5px 6px;
+  vertical-align: top;
+  font-size: 18px;
+}
+
+.hardware td:first-child {
+  width: 45%;
+  font-weight: bold;
+}
+
+/* Footer */
+.footer {
+  border-top: 1px solid #000;
+  margin-top: 25px;
+  padding-top: 6px;
+  text-align: right;
+  font-size: 12px;
+}
+
+.header-form td {
+  border: 1px solid #000;
+  padding: 10px 14px;
+  vertical-align: middle;
+}
+
+.header-form .col-left {
+  width: 25%;
+  text-align: center;
+}
+
+.header-form .col-center {
+  width: 50%;
+  text-align: center;
+  font-weight: bold;
+}
+
+.header-form .col-right {
+  width: 25%;
+  font-size: 14px;
+}
+
+.header-form .logo-container {
+  text-align: center;
+  margin-bottom: 6px;
+}
+
+.header-form .logo {
+  max-width: 80px;
+  height: auto;
+}
+
+.header-form .form-label {
+  font-weight: bold;
+  font-size: 16px;
+  margin: 4px 0;
+}
+
+.header-form .form-code {
+  font-size: 13px;
+}
+
+.header-form .title-main {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.header-form .title-sub {
+  font-size: 15px;
+  font-style: italic;
+}
+
+.header-form .col-right strong {
+  display: inline-block;
+  width: 110px;
+}
+
+/* --- SECCIÓN DE FIRMAS (No requiere cambios) --- */
+.signatures {
+    margin-top: 10px; 
+    padding-bottom: 20px;
+    padding-top: 20px;
+}
+
+.signatures-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.signature-line {
+    /* ... se mantiene centrado y con línea */
+    height: 1px;
+    width: 50%; 
+    margin: 30px auto 5px auto; 
+    border-bottom: 3px solid black; 
+}
+
+.signature-label {
+    /* ... se mantiene el estilo */
+    font-size: 0.9rem;
+    font-style: italic;
+    color: #333;
+    text-transform: uppercase;
+    text-align: center;
+}
+
+@media print {
+    
+    /* 1. Definir el tamaño de la página */
+    @page {
+        /* Tamaño Carta (8.5 x 11 in) */
+        size: letter; 
+        margin: 0.5in; /* Márgenes moderados para impresión */
+    }
+
+    /* 2. Asegurar que el contenedor principal respeta el flujo de impresión */
+    .form-container {
+        /* Forzamos el ancho máximo de la página y eliminamos el box-shadow */
+        width: 100%; 
+        max-width: 8.5in;
+        margin: 0;
+        padding: 0.25in;
+        border: none; /* Quitamos el borde visible en el navegador */
+        box-shadow: none;
+    }
+
+    /* 3. Asegurar que el texto del Acknowledgement se ajusta mejor */
+    .acknowledgement p {
+        line-height: 1.5; /* Reducir el interlineado en la impresión para ahorrar espacio */
+    }
+
+    /* Opcional: Ocultar cualquier elemento innecesario (como un botón de impresión si existiera) */
+    /* .no-print { display: none; } */
+}

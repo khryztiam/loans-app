@@ -144,3 +144,243 @@ body {
 .btn-nuevo:hover {
   background-color: #15c040;
 }
+
+/* --- VARIABLES LOCALES (Usamos las globales ya definidas) --- */
+/* Asegúrate de que las variables :root estén accesibles en este archivo CSS o que lo sea global. */
+
+/* --- 1. DASHBOARD WRAPPER Y TÍTULOS --- */
+.dashboard-content-wrapper {
+    max-width: 1200px; /* Limita el ancho del contenido para mejor lectura */
+    margin: 40px auto; /* Centra el contenido en el main */
+    padding: 20px;
+}
+
+.dashboard-content-wrapper h2 {
+    font-size: 2rem;
+    color: var(--yazaki-blue-dark); /* Título en color corporativo */
+    padding-bottom: 0;
+    margin-bottom: 15px;
+}
+
+.dashboard-content-wrapper p {
+    font-size: 1.1rem;
+    color: white;
+    margin-bottom: 30px;
+}
+
+/* --- 2. CONTENEDOR DE ACCIONES RÁPIDAS --- */
+.quick-actions {
+    display: flex;
+    flex-direction: column; /* Apila los botones verticalmente */
+    gap: 15px; /* Espacio entre los botones */
+    margin-top: 30px;
+}
+
+/* --- 3. ESTILOS DE BOTONES --- */
+
+/* Botón de Acción Primaria (Nueva Asignación - Destacado) */
+.btn-primary {
+    background-color: var(--yazaki-blue-dark);
+    color: var(--yazaki-yellow);
+    border: none;
+    padding: 15px 25px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+    text-align: left; /* Alinea el texto a la izquierda para mejor lectura */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.btn-primary:hover {
+    background-color: #004488; /* Tono más claro de azul al pasar el ratón */
+    transform: translateY(-2px); /* Efecto de elevación sutil */
+}
+
+/* Botones de Acción Secundaria (Préstamos, Tablas - Menos destacados) */
+.btn-secondary {
+    background-color: var(--yazaki-blue-medium); /* Azul medio para diferenciación */
+    color: white;
+    border: 1px solid var(--yazaki-blue-dark);
+    padding: 15px 25px;
+    font-size: 1.1rem;
+    font-weight: 500;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    text-align: left;
+}
+
+.btn-secondary:hover {
+    background-color: #0069d9; /* Azul más vibrante al pasar el ratón */
+}
+
+
+/* --- 4. RESPONSIVIDAD (Ajustes para móviles) --- */
+@media (max-width: 600px) {
+    .dashboard-content-wrapper {
+        margin: 20px 10px;
+        padding: 20px;
+    }
+
+    .dashboard-content-wrapper h2 {
+        font-size: 1.5rem;
+    }
+    
+    .btn-primary, .btn-secondary {
+        padding: 12px 20px;
+        font-size: 1rem;
+        /* El flex-direction: column ya los hace full width */
+    }
+}
+
+/* ========================================================= */
+/* --- CSS para Imprimir el Formulario (AssigningITAssetsForm) --- */
+/* ========================================================= */
+
+.form-container {
+    max-width: 8.5in; /* Tamaño de carta estándar */
+    margin: 20px auto;
+    padding: 20px;
+    background-color: white;
+    border: 1px solid #ccc; /* Borde visible en pantalla */
+}
+
+/* Ocultar elementos de la UI/Layout que no deben imprimirse */
+@media print {
+    /* Oculta la barra de navegación y la barra lateral */
+    .layout-navbar, .layout-sidebar, .print-controls {
+        display: none !important;
+    }
+
+    /* Ajusta el cuerpo para eliminar márgenes de impresión */
+    body {
+        margin: 0;
+        padding: 0;
+    }
+
+    /* Asegura que el formulario ocupe todo el espacio de impresión */
+    .form-container {
+        max-width: 100%;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        border: none; /* Elimina el borde al imprimir */
+        box-shadow: none;
+    }
+}
+
+
+/* --- Estilos de Tablas para el Formato Yazaki (Estilo PDF/Documento) --- */
+
+.header-table, .hardware-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed; /* Ayuda con el ancho de las columnas */
+    font-size: 10pt;
+}
+
+.header-table td, .hardware-table td {
+    border: 1px solid black;
+    padding: 4px 8px;
+    vertical-align: middle;
+}
+
+/* Estilos de la tabla asimétrica del encabezado */
+.header-table .col-logo {
+    text-align: center;
+}
+.header-table .logo-img {
+    max-width: 100%;
+    height: auto;
+    max-height: 50px;
+}
+.header-table .col-main-title {
+    text-align: center;
+    font-size: 14pt;
+    font-weight: bold;
+}
+.header-table .col-right-label, .header-table .col-left-label {
+    background-color: #eee;
+    font-weight: bold;
+    text-align: left;
+}
+.header-table .col-right-value {
+    text-align: center;
+}
+.header-table .col-sub-title {
+    text-align: center;
+    font-size: 12pt;
+    font-weight: 600;
+}
+.header-table .col-left-code {
+    text-align: center;
+}
+
+/* Secciones de Contenido */
+.confidential, .acknowledgement {
+    margin: 15px 0;
+    padding: 0 5px;
+    font-size: 9pt;
+}
+.confidential strong {
+    color: red;
+}
+
+/* Hardware Table */
+.hardware h4 {
+    margin-top: 20px;
+    margin-bottom: 0;
+    font-size: 11pt;
+}
+.hardware-table td:first-child {
+    width: 40%; /* Ancho de la etiqueta */
+    background-color: #f7f7f7;
+    font-weight: 600;
+}
+.hardware-table td:last-child {
+    width: 60%; /* Ancho del valor */
+}
+
+/* Footer (Print Info) */
+.footer {
+    margin-top: 30px;
+    border-top: 1px solid #ccc;
+    padding-top: 5px;
+    font-size: 8pt;
+    text-align: right;
+}
+
+/* Botón de Control en la Vista Web */
+.print-controls {
+    /* Alinea los botones al centro y añade un espacio para separarlos del formulario */
+    display: flex;
+    justify-content: center;
+    gap: 15px; /* Espacio entre los botones */
+    margin: 30px 0;
+}
+.print-button {
+    background-color: var(--yazaki-blue-dark);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+}
+/* Estilo Base para el nuevo botón */
+.back-button {
+    background-color: #6c757d; /* Gris para acción secundaria */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.2s ease;
+}
+
+.back-button:hover {
+    background-color: #5a6268;
+}

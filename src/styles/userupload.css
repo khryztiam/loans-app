@@ -23,7 +23,7 @@
 .floating-upload-button {
   position: fixed;
   bottom: 20px;
-  right: 20px;
+  left: 20px;
   background-color: #1976d2;
   color: white;
   font-size: 28px;

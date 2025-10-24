@@ -6,7 +6,9 @@ import '@/styles/summary.css';
 import '@/styles/loantable.css';
 import '@/styles/loan-modal.css';
 import '@/styles/userupload.css';
-
+import '@/styles/assignment-form.css';
+import '@/styles/responsive.css';
+import '@/styles/dashboard.css';
 
 export default function App({ Component, pageProps }) {
   const router = useRouter();

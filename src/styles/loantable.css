@@ -1,101 +1,190 @@
-.loan-header{
-  background-color: #1976d2;
-  padding: 16px 24px;
-  border-radius: 6px;
-  margin-bottom: 20px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-}
-.titulo {
-  margin: 0;
-  font-size: 1.5rem;
-  color: #ffffff;
-  font-weight: 600;
-  text-align: center;
+/* --- 1. GENERALES Y BOTÓN FLOTANTE (FAB) --- */
+
+.main-content-wrapper {
+    /* Mantenemos el padding del layout-main, pero podemos agregar un poco de estilo */
+    padding: 20px; 
 }
 
-.loading {
-  font-size: 1rem;
-  color: #555;
+.floating-action-container {
+    /* 🛑 Posicionamiento para el FAB (Botón de Acción Flotante) */
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    z-index: 900;
 }
 
-.loan-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  max-height: 700px;
-  overflow-y: auto;
-  padding: 10px;
+.fab-button {
+    background-color: var(--yazaki-blue-dark); /* Azul corporativo */
+    color: var(--yazaki-yellow); /* Texto amarillo para destacar */
+    border: none;
+    border-radius: 50px; /* Forma de pastilla */
+    padding: 15px 25px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-.loan-card {
-  background-color: #fff;
-  border: 1px solid #e0e0e0;
-  border-left: 6px solid #196cd2;
-  border-radius: 10px;
-  padding: 16px;
-  width: 100%;
-  flex: 1 1 350px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-.loan-card:hover {
-  transform: scale(1.01);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.loan-card div {
-  margin-bottom: 6px;
-  color: #444;
-}
-
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-.card-id {
-  font-weight: bold;
-  font-size: 0.9rem;
-  color: #555;
-}
-
-.card-usuario {
-  font-size: 1.1rem;
-  margin: 0;
-  color: #333;
-  flex: 1;
-  text-align: right;
-}
-
-.card-section {
-  margin-bottom: 10px;
-  font-size: 0.9rem;
-  color: #444;
-}
-
-.card-section p {
-  margin: 2px 0;
-}
-
-.card-footer {
-  font-size: 0.8rem;
-  color: #777;
-  border-top: 1px solid #eee;
-  padding-top: 8px;
+.fab-button:hover {
+    background-color: #004488;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
 }
 
 .success-message {
-  background-color: #e0ffe0;
-  color: #0a0;
-  padding: 10px;
-  margin: 10px;
-  border-radius: 6px;
-  text-align: center;
-  font-weight: bold;
+    background-color: #e6ffee; /* Verde muy suave */
+    color: #1b5e20; /* Verde oscuro */
+    padding: 12px;
+    margin: 15px 0;
+    border-radius: 6px;
+    text-align: center;
+    font-weight: bold;
+    border: 1px solid #c8e6c9;
+}
+
+.loading {
+    font-size: 1.2rem;
+    color: #777;
+    padding: 20px;
+}
+
+/* --- 2. HEADER Y TÍTULO DE LA TABLA --- */
+
+.loan-header {
+    background-color: var(--yazaki-blue-medium); /* Azul más vibrante */
+    padding: 16px 24px;
+    border-radius: 8px; /* Ligeramente más redondeado */
+    margin-bottom: 20px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+.titulo {
+    margin: 0;
+    font-size: 1.6rem;
+    color: #ffffff;
+    font-weight: 500;
+    text-align: left; /* Título alineado a la izquierda del content-wrapper */
+}
+
+/* --- 3. LOANS GRID (Tarjetas de Préstamos) --- */
+
+.loan-grid {
+    display: grid; /* Usamos grid para un layout más robusto */
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* 300px mínimo por tarjeta */
+    gap: 20px;
+    /* Eliminamos max-height y overflow-y ya que el .layout-main maneja el scroll */
+    padding: 10px 0;
+}
+
+.loan-card {
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    border-left: 6px solid var(--yazaki-blue-dark); /* Borde azul oscuro */
+    border-radius: 10px;
+    padding: 16px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+.loan-card:hover {
+    transform: translateY(-3px); /* Efecto de elevación más notable */
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #f0f0f0;
+    padding-bottom: 8px;
+    margin-bottom: 12px;
+}
+
+.card-id {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--yazaki-blue-medium);
+}
+
+.card-usuario {
+    font-size: 1.2rem;
+    margin: 0;
+    color: #333;
+    flex: 1;
+    text-align: right;
+    font-weight: 600;
+}
+
+.card-section {
+    margin-bottom: 8px;
+    font-size: 0.95rem;
+    color: #555;
+    line-height: 1.4;
+}
+
+.card-footer {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    color: #777;
+    border-top: 1px solid #eee;
+    padding-top: 10px;
+    margin-top: 5px;
+}
+
+/* --- 4. SIDEBAR - RESUMEN DE ANTIGÜEDAD (LoanAgingSummary) --- */
+
+.loan-aging-wrapper {
+    padding: 10px;
+}
+
+.sidebar-title {
+    font-size: 1.3rem;
+    color: white;
+    margin: 0 0 15px 0;
+    padding: 0 10px;
+    border-bottom: 1px solid #333;
+    padding-bottom: 10px;
+}
+
+.aging-summary-grid {
+    display: grid;
+    /* Grid de una columna en sidebar */
+    grid-template-columns: 1fr; 
+    gap: 10px;
+    padding: 0 10px;
+}
+    
+.aging-card {
+    /* Quitamos el flex/width ya que grid lo maneja */
+    padding: 10px;
+    border-radius: 6px;
+    color: white;
+    text-align: center;
+    font-weight: bold;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4); /* Sombra más fuerte para contraste en fondo oscuro */
+}
+    
+.aging-label {
+    font-size: 1rem;
+    margin-bottom: 2px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6);
+}
+
+.aging-count {
+    font-size: 1.2rem;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6);
+}
+
+.aging-total {
+    color: white;
+    font-weight: bold;
+    font-size: 1.1rem;
+    text-align: center;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #333;
 }

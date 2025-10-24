@@ -1,125 +1,199 @@
-.layout-container {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  font-family: "Segoe UI", sans-serif;
+/* --- VARIABLES GLOBALES DE COLOR (Mejor práctica) --- */
+:root {
+    --yazaki-blue-dark: #003366; 
+    --yazaki-blue-medium: #1976d2;
+    --yazaki-yellow: #ffd700; 
+    --background-light: #f4f6f9; 
+    --sidebar-bg: #1e1e1e; 
+    --logout-bg: #d32f2f; 
 }
 
+/* --- LAYOUT CONTENEDOR Y ESTRUCTURA GENERAL --- */
+.layout-container {
+    height: 100vh; /* Usa vh para ocupar la altura completa de la pantalla */
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    font-family: 'Roboto', "Segoe UI", sans-serif;
+}
+
+/* --- HEADER (Título e Info de Usuario) --- */
 .layout-header {
-  background-color: #1976d2;
-  color: white;
-  padding: 12px 24px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-shrink: 0;
+    background-color: var(--yazaki-blue-dark);
+    color: white;
+    padding: 10px 24px;
+    
+    /* 🛑 Flexbox para distribuir Título y Usuario */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .layout-title {
-  margin: 0;
-  font-size: 1.5rem;
+    margin: 0;
+    font-size: 1.7rem;
+    font-weight: 500;
 }
 
-.layout-toolbar {
-  display: flex;
-  justify-content: space-between;
+/* --- SECCIÓN DE USUARIO (Derecha) --- */
+.layout-user-section {
+    flex-shrink: 0;
 }
 
 .layout-user {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
 }
 
-.layout-user span {
-  font-size: 0.95rem;
+.user-email-text {
+    font-size: 0.9rem;
 }
 
-.layout-user button {
-  background: red;
-  color: white;
-  border: 1px solid white;
-  padding: 6px 12px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: bold;
+.logout-button {
+    background: var(--logout-bg);
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+.logout-button:hover {
+    background-color: #a01010;
 }
 
-.layout-user button:hover {
-  background-color: rgb(139, 14, 14);
+/* --- BARRA DE NAVEGACIÓN (Centrada) --- */
+.layout-nav-wrapper {
+    /* 🛑 CLAVE: Usa Flexbox para centrar la barra de navegación horizontalmente */
+    display: flex;
+    justify-content: center;
+    background-color: var(--yazaki-blue-medium); /* Un color que diferencie del header */
+    padding: 5px 0;
+    flex-shrink: 0;
+    z-index: 999; /* Asegura que esté justo debajo del header */
 }
 
+.layout-navbar {
+    /* El nav interior no necesita centrar, solo debe contener los enlaces */
+    width: auto; 
+    display: flex; 
+    padding: 0;
+    margin: 0;
+    background-color: transparent; /* Ya tiene fondo en el wrapper */
+    box-shadow: none;
+}
+
+.layout-nav-link {
+    color: #ffffff;
+    text-decoration: none;
+    padding: 8px 15px;
+    margin: 0 5px; /* Menor margen para centrar mejor */
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.layout-nav-link:hover {
+    color: var(--yazaki-yellow);
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.layout-nav-link.active {
+    color: var(--yazaki-yellow);
+    background-color: #004488; /* Tono de azul más oscuro para indicar activo */
+    font-weight: bold;
+}
+
+/* --- CONTENIDO PRINCIPAL Y BARRA LATERAL --- */
 .layout-content {
-  flex: 1;
-  display: flex;
-  overflow: auto; /* Permite scroll dentro del contenido */
+    flex: 1;
+    display: flex;
+    overflow: hidden; 
 }
 
 .layout-main {
-  flex: 1;
-  padding: 1rem;
-  background-color: #37393a;
-  overflow-y: auto;
+    flex: 1;
+    padding: 20px;
+    background-color: var(--background-light); 
+    overflow-y: auto;
+    /* 🛑 Si no hay sidebar, el main debe ocupar el 100% de .layout-content */
+    width: 100%; 
 }
 
 .layout-sidebar {
-  width: 250px;
-  padding: 0.5rem;
-  background-color: #000000;
-  border-right: 1px solid #ddd;
-  overflow-y: auto;
-  flex-shrink: 0;
+    width: 250px;
+    padding: 1rem;
+    background-color: var(--sidebar-bg); /* Fondo oscuro */
+    color: #f0f0f0;
+    border-left: 1px solid #333; /* Borde izquierdo para separar del main */
+    overflow-y: auto;
+    flex-shrink: 0;
 }
 
-/* Responsivo para móviles */
+.layout-has-sidebar {
+    display: flex; /* Ahora activamos el flexbox aquí */
+}
+
+/* --- RESPONSIVO --- */
 @media (max-width: 768px) {
-  .layout-content {
-    flex-direction: column;
-  }
+    .layout-header {
+        /* Permite que el título y la info de usuario floten mejor */
+        flex-wrap: wrap; 
+    }
+    
+    .layout-title {
+        width: 100%; /* El título ocupa toda la línea en móvil */
+        margin-bottom: 5px;
+    }
+    
+    .layout-user-section {
+        width: 100%; /* La info de usuario ocupa toda la línea */
+        justify-content: flex-start;
+        padding-bottom: 5px;
+    }
 
-  .layout-main,
-  .layout-sidebar {
-    width: 100%;
-  }
-}
+    .layout-nav-wrapper {
+        /* Desactiva el centrado para que ocupe todo el ancho */
+        justify-content: flex-start; 
+        padding: 0;
+        width: 100%;
+        background-color: var(--yazaki-blue-dark); /* Usamos el color principal */
+    }
+    
+    .layout-navbar {
+        /* 🛑 Hace que el menú se apile en móvil */
+        flex-direction: column; 
+        width: 100%;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .layout-nav-link {
+        width: 90%;
+        margin: 5px auto;
+        text-align: center;
+    }
 
-/* Estilo para el contenedor flotante */
-.floating-upload-container {
-  position: fixed;
-  bottom: 20px; /* Ajusta la distancia desde la parte inferior */
-  right: 20px; /* Ajusta la distancia desde la parte derecha */
-  background-color: white;
-  border: 2px solid #3f51b5;
-  border-radius: 10px;
-  padding: 20px;
-  width: 250px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  z-index: 1000; /* Asegura que esté por encima de otros elementos */
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
+    .layout-content {
+        flex-direction: column;
+    }
 
-.floating-upload-button {
-  position: fixed;
-  bottom: 80px; /* Ajusta la distancia desde la parte inferior */
-  right: 20px; /* Ajusta la distancia desde la parte derecha */
-  background-color: #3f51b5;
-  color: white;
-  border: none;
-  border-radius: 50%;
-  width: 60px;
-  height: 60px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 30px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.floating-upload-button:hover {
-  background-color: #303f9f;
+    .layout-main,
+    .layout-sidebar {
+        width: 100%;
+        border-left: none;
+        border-right: none;
+    }
+    
+    .layout-sidebar {
+         order: 1; /* Puedes poner la sidebar arriba o abajo, aquí la ponemos arriba */
+    }
+    .layout-main {
+        order: 2;
+    }
 }

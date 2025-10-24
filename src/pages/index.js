@@ -15,7 +15,7 @@ export default function LoginPage() {
     const checkSession = async () => {
       const { data: { session } } = await supabase.auth.getSession()
       if (session) {
-        router.push('/main') // Si está autenticado, redirige a demo
+        router.push('/dashboard') // Si está autenticado, redirige a demo
       }
     }
     checkSession()
@@ -31,7 +31,7 @@ export default function LoginPage() {
     if (error) {
       setError(error.message)
     } else {
-      router.push('/main') // Redirige si el login es exitoso
+      router.push('/dashboard') // Redirige si el login es exitoso
     }
     setLoading(false)
   }
