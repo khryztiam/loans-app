@@ -88,7 +88,7 @@ async function generateAssignmentPdf(assignmentData) {
         doc.moveDown(0.5);
 
         doc.font('Helvetica-Bold').text('Date:', 55, doc.y);
-        doc.font('Helvetica').text(assignmentData.fechaEntrega, 170, doc.y); // Fecha de asignación
+        doc.font('Helvetica').text(assignmentData.fecha_asignacion, 170, doc.y); // Fecha de asignación
         doc.moveDown(3);
 
         // --- PIE DE PÁGINA Y FIRMAS ---
@@ -138,7 +138,7 @@ export default async function handler(req, res) {
                 modelo: formData.modeloEquipo,
                 serie: formData.serie,
                 detalles: formData.accesorios, // Se inserta como JSONB
-                fecha_asignacion: formData.fechaEntrega,
+                fecha_asignacion: formData.fecha_asignacion,
                 localidad: formData.localidad,
             })
             .select()

@@ -35,7 +35,7 @@ async function generateAssignmentPdf(assignmentData) {
       year: "numeric",
     });
     const fechaAsignacion = new Date(
-      assignmentData.fechaEntrega
+      assignmentData.fecha_asignacion
     ).toLocaleDateString("es-ES", {
       day: "2-digit",
       month: "2-digit",
@@ -268,7 +268,7 @@ export default async function handler(req, res) {
       asignacionId: asignacionData.id,
       modeloEquipo: asignacionData.modelo,
       accesorios: asignacionData.detalles || [],
-      fechaEntrega: asignacionData.fecha_asignacion,
+      fecha_asignacion: asignacionData.fecha_asignacion,
 
       userInfo: {
         nombre: userData.nombre,

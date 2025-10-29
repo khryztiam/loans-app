@@ -19,7 +19,7 @@ export default function AsignacionForm({ assignmentId, onSuccess }) {
     serie: "", // <-- NUEVO: Número de Serie del Equipo
     localidad: "", // <-- NUEVO: Localidad de la Asignación
     accesorios: [], // Array de accesorios/detalles seleccionados
-    fechaEntrega: new Date().toISOString().substring(0, 10),
+    fecha_asignacion: new Date().toISOString().substring(0, 10),
   });
 
   // Datos estáticos de ejemplo (IDEALMENTE CARGADOS DE SUPABASE en el componente padre)
@@ -71,7 +71,7 @@ export default function AsignacionForm({ assignmentId, onSuccess }) {
       const { data: assignment, error: assignError } = await supabase
         .from("asignaciones_permanentes")
         .select(
-          `sapid, modelo, serie, accesorios, localidad, fecha_asignacion:fechaEntrega`
+          `sapid, modelo, serie, accesorios, localidad, fecha_asignacion`
         ) // 🛑 Alias para mapear 'fechaEntrega'
         .eq("id", assignmentId)
         .single();
@@ -100,8 +100,8 @@ export default function AsignacionForm({ assignmentId, onSuccess }) {
         serie: assignment.serie,
         localidad: assignment.localidad,
         // Si la DB guarda la fecha con timestamp, la cortamos para el input type="date"
-        fechaEntrega: assignment.fechaEntrega
-          ? assignment.fechaEntrega.substring(0, 10)
+        fecha_asignacion: assignment.fecha_asignacion
+          ? assignment.fecha_asignacion.substring(0, 10)
           : new Date().toISOString().substring(0, 10),
         // Asegurar que accesorios es un array, si se guardó como JSON o string
         accesorios: Array.isArray(assignment.accesorios)
@@ -219,7 +219,7 @@ export default function AsignacionForm({ assignmentId, onSuccess }) {
       serie: formData.serie,
       localidad: formData.localidad,
       detalles: formData.detalles,
-      fechaEntrega: formData.fechaEntrega,
+      fecha_asignacion: formData.fecha_asignacion,
       // No enviamos userIdInput, userName, etc.
     };
 
@@ -412,12 +412,12 @@ export default function AsignacionForm({ assignmentId, onSuccess }) {
 
         {/* Fecha de Entrega (Punto 4) */}
         <div className="form-group">
-          <label htmlFor="fechaEntrega">Fecha de Entrega:</label>
+          <label htmlFor="fecha_asignacion">Fecha de Entrega:</label>
           <input
             type="date"
-            id="fechaEntrega"
-            name="fechaEntrega"
-            value={formData.fechaEntrega}
+            id="fecha_asignacion"
+            name="fecha_asignacion"
+            value={formData.fecha_asignacion}
             onChange={handleChange}
             max={new Date().toISOString().substring(0, 10)}
             required
