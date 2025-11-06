@@ -188,3 +188,36 @@
     padding-top: 10px;
     border-top: 1px solid #333;
 }
+
+/* ========================================= */
+/* --- AVISO FLOTANTE --- */
+/* ========================================= */
+
+.floating-alert {
+    position: fixed; /* Lo hace flotante, ignorando el flujo del documento */
+    top: 100px; /* Distancia desde la parte superior */
+    right: 20px; /* Distancia desde la derecha */
+    z-index: 1000; /* Asegura que esté por encima de otros elementos */
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-weight: bold;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+.no-stock-alert {
+    background-color: #f8d7da; /* Rojo claro */
+    color: #721c24; /* Rojo oscuro */
+    border: 1px solid #f5c6cb;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
