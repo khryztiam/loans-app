@@ -19,7 +19,7 @@ export default function PrestamosPage() {
   const [loansData, setLoansData] = useState([]);
 
   // 🛑 VALOR DE INVENTARIO: AJUSTA ESTE NÚMERO A TU INVENTARIO TOTAL DE LAPTOPS
-  const TOTAL_INVENTORY_LAPTOPS = 10;
+  const TOTAL_INVENTORY_LAPTOPS = 9;
 
   const fetchLoans = useCallback(async () => {
     // 🛑 CLÁUSULAS DE FILTRADO AGREGADAS A LA CONSULTA DE SUPABASE
