@@ -28,6 +28,7 @@ export default function AsignacionForm({ assignmentId, onSuccess }) {
     "LATITUDE 5430",
     "LATITUDE 5440",
     "LATITUDE 5450",
+    "LATITUDE 5480",
     "LATITUDE 5490",
     "OPTIPLEX 3000",
     "OPTIPLEX 7010",
