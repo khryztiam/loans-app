@@ -43,33 +43,33 @@ export default function AssigningITAssetsForm({ assignmentData }) {
                 rowSpan={2}
                 style={{ width: "60%" }}
               >
-                YNCA Business Management Systems
+                Cross Regional Business Management Systems
               </td>
 
               {/* Columna Derecha: Region / Dept. */}
               <td className="col-right-label" style={{ width: "20%" }}>
-                Region / Dept.
+                Revision Date:
               </td>
             </tr>
 
             {/* FILA 2 (YNCA / Information Technology) */}
             <tr>
               {/* Columna Derecha: YNCA / IT */}
-              <td className="col-right-value">YNCA / Information Technology</td>
+              <td className="col-right-value">19/Jan/2026</td>
             </tr>
 
             {/* FILA 3 (FORM, Título Sub, Revision Date Label) */}
             <tr>
               {/* Columna Izquierda: FORM label */}
-              <td className="col-left-label">FORM</td>
+              <td className="col-left-label">Ox-IT-xx-F-002</td>
 
               {/* Columna Central: Subtítulo (rowSpan=2) */}
               <td className="col-sub-title" rowSpan={2}>
-                Assigning IT Assets to Associates Form
+                IT Assets allocation to Associates Form
               </td>
 
               {/* Columna Derecha: Revision Date Label */}
-              <td className="col-right-label"> Revision Date:</td>
+              <td className="col-right-label"> Revision Level:</td>
             </tr>
 
             {/* FILA 4 (Código, Fecha de Revisión) */}
@@ -87,9 +87,8 @@ export default function AssigningITAssetsForm({ assignmentData }) {
       <section className="confidential">
         <p>
           <strong>CONFIDENTIAL:</strong> This information is Yazaki property and
-          can only be distributed to formal business partners or parties
-          authorized by the signing of non-disclosure agreements. Copies are
-          uncontrolled and subject to YA-01-01 Documentation and Records Policy.
+          must follow applicable global and regional confidenciality rules. Copies
+           are reference only, see network for latest revision.
         </p>
       </section>
 
