@@ -21,32 +21,35 @@ export default function PrestamosPage() {
   // 🛑 VALOR DE INVENTARIO: AJUSTA ESTE NÚMERO A TU INVENTARIO TOTAL DE LAPTOPS
   const TOTAL_INVENTORY_LAPTOPS = 10;
 
-  const fetchLoans = useCallback(async () => {
-    // 🛑 CLÁUSULAS DE FILTRADO AGREGADAS A LA CONSULTA DE SUPABASE
-    const { data, error } = await supabase
-      .from("loans")
-      .select(
-        `id, nombre_recibe, tipo_equipo, serie, created_at, users(puesto, descripcion)`
-      )
-      .is("received_at", null) // El equipo aún no ha sido recibido
-      .is("sapid_recepcion", null) // El campo de SAP ID de recepción es nulo (sin recibir)
-      .order("created_at", { ascending: false }); // Ordenamos por fecha de creación
+  // ✅ UTILIDADES CENTRALIZADAS PARA FILTRADO
+  const isActiveLoan = (loan) => {
+    return loan?.received_at === null || loan?.received_at === undefined || loan?.received_at === '';
+  };
 
-    if (!error) {
-      setLoansData(data);
-    } else {
+  const isLaptop = (loan) => {
+    return loan?.tipo_equipo && loan.tipo_equipo.toLowerCase() === "laptop";
+  };
+
+  const fetchLoans = useCallback(async () => {
+    try {
+      // 🛑 CLÁUSULAS DE FILTRADO AGREGADAS A LA CONSULTA DE SUPABASE
+      const { data, error } = await supabase
+        .from("loans")
+        .select(
+          `id, nombre_recibe, tipo_equipo, serie, created_at, users(puesto, descripcion)`
+        )
+        .is("received_at", null) // El equipo aún no ha sido recibido
+        .is("sapid_recepcion", null) // El campo de SAP ID de recepción es nulo (sin recibir)
+        .order("created_at", { ascending: false }) // Ordenamos por fecha de creación
+        .limit(100); // ✅ Límite de resultados para evitar sobrecarga
+
+      if (error) throw error;
+      setLoansData(data || []);
+    } catch (error) {
       console.error("Error al obtener préstamos activos:", error);
+      setLoansData([]);
     }
   }, []);
-
-  const fetchUser = async () => {
-    const { data } = await supabase.auth.getUser();
-    if (data?.user) {
-      setUser(data.user);
-    } else {
-      router.push("/");
-    }
-  };
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -58,18 +61,9 @@ export default function PrestamosPage() {
 
   // --- LÓGICA DE STOCK DE LAPTOPS ---
 
-  // 1. Contar cuántas laptops están activamente prestadas
+  // 1. ✅ Contar cuántas laptops están activamente prestadas usando funciones centralizadas
   const activeLaptopLoans = loansData.filter((loan) => {
-    // Verificamos que el equipo sea una "laptop"
-    const isLaptop =
-      loan.tipo_equipo && loan.tipo_equipo.toLowerCase() === "laptop";
-
-    // Usamos la verificación robusta de si el préstamo está activo
-    const received = loan.received_at;
-    const isActive =
-      received === null || received === undefined || received === "";
-
-    return isLaptop && isActive;
+    return isLaptop(loan) && isActiveLoan(loan);
   }).length;
 
   // 2. Calcular el stock restante
@@ -104,7 +98,16 @@ export default function PrestamosPage() {
     };
   }, [fetchLoans]); // Dependencia agregada para useCallback
 
+  // ✅ fetchUser movido al useEffect para tener acceso correcto a router
   useEffect(() => {
+    const fetchUser = async () => {
+      const { data } = await supabase.auth.getUser();
+      if (data?.user) {
+        setUser(data.user);
+      } else {
+        router.push("/");
+      }
+    };
     fetchUser();
   }, [router]);
 
@@ -131,13 +134,11 @@ export default function PrestamosPage() {
       <div className="main-content-wrapper">
         {/* 🛑 ELIMINAMOS EL BOTÓN DE NUEVO PRÉSTAMO DE AQUÍ */}
 
-        {/* 🛑 El componente LoansTable ya incluye su propio título (loan-header) */}
+        {/* ✅ El componente LoansTable ya incluye su propio título (loan-header) */}
         <LoansTable
-                    loans={loansData.filter(
-                        (l) => l.received_at === null || l.received_at === undefined || l.received_at === ''
-                    )}
-                    fetchLoans={fetchLoans}
-                />
+          loans={loansData.filter(isActiveLoan)}
+          fetchLoans={fetchLoans}
+        />
       </div>
 
       {/* 🛑 NUEVO CONTENEDOR FLOTANTE PARA EL BOTÓN DE REGISTRO */}
