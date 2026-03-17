@@ -1,183 +1,186 @@
-// pages/dashboard/index.js
-import { useState, useEffect } from "react";
-import { supabase } from "@/lib/supabase";
-import { useRouter } from "next/router";
-import Layout from "@/components/Layout";
-// Aquí ya NO importamos LoansTable ni LoanAgingSummary
+import { useState, useEffect } from 'react';
+import { useAuth } from '@/hooks/useAuth';
+import { RootLayout } from '@/components/layout/RootLayout';
+import { ProtectedLayout } from '@/components/layout/ProtectedLayout';
+import { Spinner, Alert, Button } from '@/components/ui';
+import loansService from '@/services/loans.service';
+import { useRouter } from 'next/router';
+
+const MetricCard = ({ title, value, description, type = 'info' }) => {
+  const styles = {
+    info: {
+      border: 'border-l-4 border-l-blue-600',
+      bg: 'bg-gradient-to-br from-blue-600 to-blue-700',
+      titleColor: 'text-blue-100',
+      valueColor: 'text-white',
+      descColor: 'text-blue-100',
+    },
+    warning: {
+      border: 'border-l-4 border-l-red-600',
+      bg: 'bg-gradient-to-br from-red-600 to-red-700',
+      titleColor: 'text-red-100',
+      valueColor: 'text-white',
+      descColor: 'text-red-100',
+    },
+    success: {
+      border: 'border-l-4 border-l-green-600',
+      bg: 'bg-gradient-to-br from-green-600 to-green-700',
+      titleColor: 'text-green-100',
+      valueColor: 'text-white',
+      descColor: 'text-green-100',
+    },
+  };
+
+  const style = styles[type];
+
+  return (
+    <div className={`${style.border} ${style.bg} rounded-lg p-6 shadow-lg hover:shadow-xl transition-all transform hover:scale-105`}>
+      <div className={`text-sm font-semibold ${style.titleColor} mb-2 uppercase tracking-wider`}>{title}</div>
+      <div className={`text-4xl font-bold ${style.valueColor} mb-2`}>
+        {value}
+      </div>
+      <div className={`text-sm ${style.descColor}`}>{description}</div>
+    </div>
+  );
+};
 
 export default function DashboardPage() {
-  const [user, setUser] = useState(null);
+  const { user, loading: authLoading } = useAuth();
   const router = useRouter();
-  // 🛑 NUEVO ESTADO PARA LAS MÉTRICAS
-  const [metrics, setMetrics] = useState({
-    weeklyLoans: 0,
-    activeLoans: 0,
-    overdueLoans: 0,
-    loading: true,
-  });
-
-  const fetchUser = async () => {
-    const { data } = await supabase.auth.getUser();
-    if (data?.user) {
-      setUser(data.user);
-    } else {
-      router.push("/");
-    }
-  };
-
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    router.push("/");
-  };
-
-  // 🛑 FUNCIÓN PARA OBTENER MÉTRICAS (Enfoque en Préstamos)
-  const fetchMetrics = async () => {
-    setMetrics((prev) => ({ ...prev, loading: true }));
-    try {
-      const today = new Date();
-
-      // --- 1. Préstamos Activos (received_at IS NULL) ---
-      const { count: activeLoans } = await supabase
-        .from("loans")
-        .select("*", { count: "exact", head: true })
-        .is("received_at", null);
-
-      // --- 2. Préstamos Vencidos (Calculado en el cliente por simplicidad) ---
-      const { data: activeLoansData } = await supabase
-        .from("loans")
-        .select("created_at, dias_prestamo")
-        .is("received_at", null);
-
-      let overdueCount = 0;
-      if (activeLoansData) {
-        activeLoansData.forEach((loan) => {
-          const deadline = new Date(loan.created_at);
-          deadline.setDate(deadline.getDate() + loan.dias_prestamo);
-          if (today > deadline) {
-            overdueCount++;
-          }
-        });
-      }
-
-      // --- 3. Préstamos Registrados esta Semana ---
-      const oneWeekAgo = new Date();
-      oneWeekAgo.setDate(today.getDate() - 7);
-
-      const { count: weeklyLoans } = await supabase
-        .from("loans")
-        .select("*", { count: "exact", head: true })
-        .gte("created_at", oneWeekAgo.toISOString());
-
-      setMetrics({
-        activeLoans: activeLoans || 0,
-        overdueLoans: overdueCount || 0,
-        weeklyLoans: weeklyLoans || 0,
-        loading: false,
-      });
-    } catch (error) {
-      console.error("Error fetching metrics:", error);
-      setMetrics((prev) => ({ ...prev, loading: false }));
-    }
-  };
+  const [metrics, setMetrics] = useState(null);
+  const [loans, setLoans] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
   useEffect(() => {
-    fetchUser();
-    fetchMetrics();
-  }, [router]);
+    if (!authLoading && !user) {
+      router.push('/');
+      return;
+    }
 
-  if (!user)
-    return (
-      <Layout user={null} sidebar={null}>
-        <div>Cargando...</div>
-      </Layout>
+    const loadData = async () => {
+      try {
+        // Cargar métricas
+        const metricsData = await loansService.fetchLoanMetrics();
+        setMetrics(metricsData);
+
+        // Cargar préstamos activos para tracking
+        const loansData = await loansService.fetchActiveLoans();
+        setLoans(loansData);
+      } catch (err) {
+        setError('Error al cargar datos. Intente posteriormente.');
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (user) {
+      loadData();
+    }
+  }, [user, authLoading, router]);
+
+  const calculateStatus = (loan) => {
+    const diasPasados = Math.floor(
+      (Date.now() - new Date(loan.created_at).getTime()) / (1000 * 60 * 60 * 24)
     );
+    const diasRestantes = loan.dias_prestamo - diasPasados;
 
-  // Usamos el layout pero con el sidebar vacío (null)
+    if (diasRestantes < 0) {
+      return { status: 'vencido', label: 'VENCIDO', color: 'red' };
+    } else if (diasRestantes <= 2) {
+      return { status: 'proximo', label: 'POR VENCER', color: 'yellow' };
+    } else {
+      return { status: 'activo', label: 'ACTIVO', color: 'green' };
+    }
+  };
+
+  if (authLoading || loading) {
+    return (
+      <RootLayout>
+        <div className="flex justify-center items-center h-96">
+          <Spinner />
+        </div>
+      </RootLayout>
+    );
+  }
+
+  if (error) {
+    return (
+      <RootLayout>
+        <Alert variant="error">{error}</Alert>
+      </RootLayout>
+    );
+  }
+
   return (
-    <Layout user={user} handleLogout={handleLogout} sidebar={null}>
-      <div className="dashboard-content-wrapper">
-        <h2>Panel de Control Principal 🛠️</h2>
+    <ProtectedLayout>
+      <RootLayout>
+        <div className="mb-8">
+          <h2 className="text-3xl font-bold text-gray-900 mb-2">Dashboard</h2>
+          <p className="text-gray-600">Resumen de préstamos y asignaciones de equipos IT</p>
+        </div>
 
-        {/* 🛑 ZONA SUPERIOR: KPI CARDS */}
-        {metrics.loading ? (
-          <p>Cargando métricas...</p>
-        ) : (
-          <div className="kpi-cards-grid">
-            <KPICard
-              title="Préstamos esta Semana"
-              value={metrics.weeklyLoans}
-              icon="📅"
-              color="#387e41" // Verde para actividad reciente
-              description="Total de equipos prestados en los últimos 7 días."
-              onClick={() => router.push("/prestamos")}
-            />
-            <KPICard
-              title="Préstamos Activos"
-              value={metrics.activeLoans}
-              icon="🔗"
-              color="#1976d2"
-              description="Equipos temporalmente fuera de oficina IT."
-              onClick={() => router.push("/prestamos")}
-            />
-            <KPICard
-              title="Préstamos Vencidos"
-              value={metrics.overdueLoans}
-              icon="⚠️"
-              color={metrics.overdueLoans > 0 ? "#d32f2f" : "#2e7d32"} // Rojo si hay vencidos
-              description="Equipos con fecha de devolución expirada."
-              onClick={() => router.push("/prestamos")}
-            />
-          </div>
-        )}
-
-        {/* 🛑 ZONA INFERIOR: ACCIONES CON MEJOR DISEÑO */}
-        <h3>Acciones Rápidas</h3>
-        <div className="quick-actions-grid">
-          <ActionCard
-            title="Registrar Asignación"
-            icon="📝"
-            description="Crear un nuevo registro de asignación permanente de equipo."
-            onClick={() => router.push("/asignacion")}
+        {/* Métricas */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+          <MetricCard
+            title="Préstamos Activos"
+            value={metrics?.activeLoans || 0}
+            description="Equipos en poder del personal"
+            type="info"
           />
-          <ActionCard
-            title="Gestión de Préstamos"
-            icon="📅"
-            description="Ver el listado de préstamos activos y la antigüedad."
-            onClick={() => router.push("/prestamos")}
+          <MetricCard
+            title="Préstamos Vencidos"
+            value={metrics?.overdueLoans || 0}
+            description="Equipos que excedieron plazo"
+            type="warning"
           />
-          <ActionCard
-            title="Consultar Asignaciones"
-            icon="🔎"
-            description="Revisar la tabla de asignaciones permanentes para edición."
-            onClick={() => router.push("/asignacion")}
+          <MetricCard
+            title="Esta Semana"
+            value={metrics?.weeklyLoans || 0}
+            description="Nuevos préstamos registrados"
+            type="success"
           />
         </div>
-      </div>
-    </Layout>
+
+        {/* Acciones rápidas */}
+        <div className="bg-white rounded-lg shadow-lg p-8">
+          <h3 className="text-2xl font-bold text-gray-900 mb-6">⚡ Acciones Rápidas</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <button
+              onClick={() => router.push('/prestamos')}
+              className="p-6 rounded-lg bg-gradient-to-br from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white shadow-md hover:shadow-lg transition-all text-left transform hover:scale-105"
+            >
+              <div className="font-bold text-xl">📤 Registrar Movimiento</div>
+              <div className="text-sm text-blue-100 mt-2">Entrega o recepción de equipo</div>
+            </button>
+
+            <button
+              onClick={() => router.push('/asignaciones')}
+              className="p-6 rounded-lg bg-gradient-to-br from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white shadow-md hover:shadow-lg transition-all text-left transform hover:scale-105"
+            >
+              <div className="font-bold text-xl">🏷️ Nueva Asignación</div>
+              <div className="text-sm text-purple-100 mt-2">Asignar equipo permanente</div>
+            </button>
+
+            <button
+              onClick={() => router.push('/usuarios')}
+              className="p-6 rounded-lg bg-gradient-to-br from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white shadow-md hover:shadow-lg transition-all text-left transform hover:scale-105"
+            >
+              <div className="font-bold text-xl">👥 Importar Usuarios</div>
+              <div className="text-sm text-green-100 mt-2">Cargar base de datos de personal</div>
+            </button>
+
+            <button
+              onClick={() => router.push('/prestamos')}
+              className="p-6 rounded-lg bg-gradient-to-br from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800 text-white shadow-md hover:shadow-lg transition-all text-left transform hover:scale-105"
+            >
+              <div className="font-bold text-xl">📊 Ver Todos los Equipos</div>
+              <div className="text-sm text-orange-100 mt-2">Listado completo de préstamos</div>
+            </button>
+          </div>
+        </div>
+      </RootLayout>
+    </ProtectedLayout>
   );
 }
-
-// 🛑 Componente Helper para KPI
-const KPICard = ({ title, value, icon, color, description, onClick }) => (
-  <div
-    className="kpi-card"
-    style={{ backgroundColor: color }}
-    onClick={onClick}
-  >
-    <div className="kpi-header">
-      <span className="kpi-icon">{icon}</span>
-      <h4 className="kpi-title">{title}</h4>
-    </div>
-    <div className="kpi-value">{value}</div>
-    <p className="kpi-description">{description}</p>
-  </div>
-);
-
-// 🛑 Componente Helper para Acciones
-const ActionCard = ({ title, icon, description, onClick }) => (
-  <div className="action-card" onClick={onClick}>
-    <span className="action-icon">{icon}</span>
-    <h4 className="action-title">{title}</h4>
-    <p className="action-description">{description}</p>
-  </div>
-);

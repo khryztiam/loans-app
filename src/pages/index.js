@@ -1,98 +1,96 @@
-import { useState, useEffect } from 'react'
-import { supabase } from '../lib/supabase'
-import { useRouter } from 'next/router'
-import { TextField, Button, Typography, Container, Box } from '@mui/material'
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
+import { supabase } from '@/lib/supabase';
+import { Button, Input, Alert } from '@/components/ui';
+import { RootLayout } from '@/components/layout/RootLayout';
 
 export default function LoginPage() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [error, setError] = useState(null)
-  const [loading, setLoading] = useState(false)
-  const router = useRouter()
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
-  // Verificar si el usuario ya está autenticado al cargar la página
   useEffect(() => {
     const checkSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (session) {
-        router.push('/dashboard') // Si está autenticado, redirige a demo
+      const { data } = await supabase.auth.getSession();
+      if (data?.session) {
+        router.push('/dashboard');
       }
-    }
-    checkSession()
-  }, [router])
+    };
+    checkSession();
+  }, [router]);
 
   const handleLogin = async (e) => {
-    e.preventDefault()
-    setError(null)
-    setLoading(true)
+    e.preventDefault();
+    setError('');
+    setLoading(true);
 
-    const { error } = await supabase.auth.signInWithPassword({ email, password })
+    try {
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
 
-    if (error) {
-      setError(error.message)
-    } else {
-      router.push('/dashboard') // Redirige si el login es exitoso
+      if (signInError) {
+        setError(signInError.message || 'Error al iniciar sesión');
+      } else {
+        router.push('/dashboard');
+      }
+    } catch (err) {
+      setError('Error inesperado. Intente nuevamente.');
+      console.error(err);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false)
-  }
+  };
 
   return (
-    <Box
-      sx={{
-        minHeight: '100dvh',
-        backgroundImage: 'url(/background.png)', // pon tu ruta aquí
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-      }}
-    >
-    <Container maxWidth="xs"
-      sx={{
-        backgroundColor: 'rgba(255, 255, 255, 0.9)',
-        padding: 4,
-        borderRadius: 2,
-        boxShadow: 3,
-      }}
-    >
-      <Typography variant="h4" gutterBottom align="center">
-        Iniciar sesión
-        </Typography>
-      <form onSubmit={handleLogin}>
-        <TextField
-          label="Correo electronico"
-          variant='outlined'
-          fullWidth
-          margin='normal'
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <TextField
-          label='Password'
-          variant='outlined'
-          fullWidth
-          margin='normal'
-          type='password'
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-        <Button
-          type="submit"
-          variant='contained'
-          color='primary'
-          fullWidth
-          style={{marginTop:'1rem'}}
-          disabled={loading}>
-          {loading ? 'Cargando...' : 'Entrar'}
-        </Button>
-      </form>
-      {error && <Typography color= 'error' align='center' style={{ marginTop: '1rem' }}>
-        {error}
-        </Typography>}
-    </Container>
-    </Box>
-  )
+    <RootLayout showHeader={false}>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-blue-100">
+        <div className="w-full max-w-md card-lg">
+          <h1 className="text-3xl font-bold text-center mb-6 text-blue-900">
+            Gestión de Activos IT
+          </h1>
+
+          {error && <Alert variant="error" className="mb-4">{error}</Alert>}
+
+          <form onSubmit={handleLogin}>
+            <Input
+              label="Email"
+              type="email"
+              placeholder="tu@email.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+
+            <Input
+              label="Contraseña"
+              type="password"
+              placeholder="••••••••"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+
+            <Button
+              type="submit"
+              variant="primary"
+              size="lg"
+              loading={loading}
+              disabled={loading}
+              className="w-full"
+            >
+              {loading ? 'Iniciando sesión...' : 'Iniciar sesión'}
+            </Button>
+          </form>
+
+          <p className="text-center text-gray-600 text-sm mt-4">
+            Sistema interno de Gestión de Préstamos de Equipos IT
+          </p>
+        </div>
+      </div>
+    </RootLayout>
+  );
 }
